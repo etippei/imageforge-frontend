@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageForge AI - Professional Image Toolkit</title>
+    <link rel="stylesheet" href="common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== 导航栏字体放大 ===== */
+        .nav-link {
+            font-size: 1.15rem !important;
+            font-weight: 600 !important;
+            padding: 0.7rem 1.4rem !important;
+        }
+        @media (max-width: 768px) {
+            .nav-link { font-size: 0.95rem !important; padding: 0.4rem 0.8rem !important; }
+        }
+        @media (max-width: 480px) {
+            .nav-link { font-size: 0.8rem !important; padding: 0.3rem 0.6rem !important; }
+        }
+
+        /* ===== 色彩优化 ===== */
+        .hero {
+            background: linear-gradient(135deg, #eef2ff 0%, #dbeafe 50%, #ede9fe 100%) !important;
+        }
+        .tool-card {
+            border-left: 4px solid #2563eb;
+            transition: all 0.3s;
+        }
+        /* 第一个卡片（ID Photo）用金色/橙色突出显示 */
+        .tool-card:first-child {
+            border-left-color: #f59e0b;
+            background: linear-gradient(145deg, #fffbeb, #ffffff);
+        }
+        .tool-card:first-child .tool-icon {
+            background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+            color: #d97706 !important;
+        }
+        .tool-card:first-child .tech-badge {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+        /* 其他卡片颜色 */
+        .tool-card:nth-child(2) { border-left-color: #2563eb; }
+        .tool-card:nth-child(3) { border-left-color: #8b5cf6; }
+        .tool-card:nth-child(4) { border-left-color: #059669; }
+        .tool-card:nth-child(5) { border-left-color: #d97706; }
+        .tool-card:nth-child(6) { border-left-color: #dc2626; }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+        .tool-icon {
+            background: linear-gradient(135deg, #2563eb10, #7c3aed10);
+            padding: 10px;
+            border-radius: 14px;
+        }
+        .tech-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #475569;
+            background: #f1f5f9;
+            padding: 0.15rem 0.8rem;
+            border-radius: 30px;
+            margin-top: 6px;
+            letter-spacing: 0.02em;
+            border: 1px solid #e2e8f0;
+        }
+        .section-title i {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            border: 2px solid #2563eb !important;
+            color: #2563eb !important;
+        }
+        .btn-outline:hover {
+            background: #2563eb !important;
+            color: white !important;
+        }
+        .pricing-section {
+            background: linear-gradient(180deg, #ffffff, #f8faff) !important;
+            border: 1px solid #e2e8f0;
+        }
+        .logo h1 {
+            background: linear-gradient(135deg, #2563eb, #7c3aed, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .user-greeting {
+            background: linear-gradient(135deg, #eef2ff, #ede9fe) !important;
+        }
+        .hot-badge {
+            background: #f59e0b;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tool-card:first-child .limit-badge {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="site-header">
+        <div class="logo">
+            <h1>ImageForge<span>AI</span></h1>
+            <span>Professional AI Image Toolkit</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">🏠 Home</a>
+            <a href="blog.html" class="nav-link">📝 Blog</a>
+            <a href="help.html" class="nav-link">❓ Help</a>
+            <a href="contact.html" class="nav-link">📧 Contact</a>
+            <a href="pricing.html" class="nav-link">💰 Pricing</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h2 class="hero-title">AI-Powered Image Editing Suite</h2>
+        <p class="hero-desc">Upscale, compress, remove backgrounds, convert formats & resize — all with cutting-edge AI. Trusted by 50,000+ creators worldwide.</p>
+        <div style="margin-top:1.2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <a href="#tools-section" class="btn btn-primary" style="padding:0.8rem 2rem; font-size:1.05rem;">Explore Tools</a>
+            <a href="pricing.html" class="btn btn-outline" style="padding:0.8rem 2rem; font-size:1.05rem;">View Pricing</a>
+        </div>
+    </div>
+
+    <!-- ====== TOOLS SECTION ====== -->
+    <div class="section-wrapper" id="tools-section">
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-crown"></i> Featured Tools</h2>
+            <p class="section-subtitle">Click any tool to start editing your images instantly</p>
+        </div>
+        <div class="tools-grid" id="toolsGrid">
+            <!-- 由JS动态生成 -->
+        </div>
+    </div>
+
+    <!-- ====== 简化的Pricing入口 ====== -->
+    <div class="pricing-section" id="pricingSection" style="text-align:center; padding:2.5rem;">
+        <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:0.5rem;">Ready to Unlock More?</h2>
+        <p style="color:#475569; margin-bottom:1.5rem;">Get unlimited access, higher resolutions, and premium features.</p>
+        <a href="pricing.html" class="btn btn-primary" style="padding:0.8rem 2.5rem; font-size:1.05rem;">View All Plans →</a>
+    </div>
+
+    <!-- ====== 页脚已删除 ====== -->
+</div>
+
+<script src="common.js"></script>
+<script>
+    // ============================================
+    // Tools Data — ID Photo 排第一位
+    // ============================================
+    const tools = [
+        {
+            id: 'idphoto',
+            name: 'ID Photo Maker',
+            icon: 'fa-id-card',
+            desc: 'Replace background & resize for passport/visa',
+            tech: 'Rembg · U²-Net · Background Synthesis',
+            route: 'tools/id-photo.html',
+            freeLimit: '3/day, Standard',
+            proLimit: 'Unlimited, Premium HD',
+            isNew: true,
+            isHot: true
+        },
+        {
+            id: 'upscaler',
+            name: 'AI Image Upscaler',
+            icon: 'fa-magic',
+            desc: 'Upscale images 2x with AI super-resolution',
+            tech: 'Real-ESRGAN · Neural Network Upscaling',
+            route: 'tools/upscaler.html',
+            freeLimit: '3/day, Max 4MP',
+            proLimit: 'Unlimited up to 64MP'
+        },
+        {
+            id: 'rembg',
+            name: 'Background Remover',
+            icon: 'fa-eraser',
+            desc: 'Remove image background with AI segmentation',
+            tech: 'Rembg · U²-Net · Semantic Segmentation',
+            route: 'tools/bg-remover.html',
+            freeLimit: '3/day, Standard',
+            proLimit: 'Unlimited, Premium HD'
+        },
+        {
+            id: 'compressor',
+            name: 'Image Compressor',
+            icon: 'fa-compress',
+            desc: 'Reduce file size while preserving quality',
+            tech: 'Sharp · libvips · Perceptual Compression',
+            route: 'tools/compressor.html',
+            freeLimit: '5/day, Max 5MB',
+            proLimit: 'Unlimited up to 50MB'
+        },
+        {
+            id: 'convert',
+            name: 'PNG to JPG',
+            icon: 'fa-exchange-alt',
+            desc: 'Convert PNG to JPG with white background',
+            tech: 'Sharp · libjpeg-turbo · Format Encoding',
+            route: 'tools/convert.html',
+            freeLimit: '5/day',
+            proLimit: 'Unlimited'
+        },
+        {
+            id: 'resize',
+            name: 'Resize Image',
+            icon: 'fa-arrows-alt',
+            desc: 'Change image dimensions to custom size',
+            tech: 'Sharp · Lanczos Resampling · Anti-aliasing',
+            route: 'tools/resize.html',
+            freeLimit: '5/day, Max 2048px',
+            proLimit: 'Unlimited up to 8192px'
+        }
+    ];
+
+    // ============================================
+    // Render Functions
+    // ============================================
+
+    function renderTools() {
+        const container = document.getElementById('toolsGrid');
+        const user = JSON.parse(localStorage.getItem('forge_user'));
+
+        if (container) {
+            container.innerHTML = tools.map((tool, index) => {
+                const hotBadge = (index === 0 && tool.isHot)
+                    ? '<span class="hot-badge">🔥 Hot</span>'
+                    : '';
+                const newBadge = (index === 0 && tool.isNew)
+                    ? '<span class="hot-badge" style="background:#2563eb;">New</span>'
+                    : '';
+
+                return `
+                <div class="tool-card" data-tool="${tool.id}">
+                    <div class="tool-icon"><i class="fas ${tool.icon}"></i></div>
+                    <h3>${tool.name} ${hotBadge} ${newBadge}</h3>
+                    <div class="tool-desc">${tool.desc}</div>
+                    <div class="tech-badge">⚙️ ${tool.tech}</div>
+                    <div class="limit-badge" style="margin-top:8px;">
+                        ${user?.plan === 'pro' ? '✅ PRO: ' + tool.proLimit : '🔒 FREE: ' + tool.freeLimit}
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="window.location.href='${tool.route}'">
+                        ${user ? 'Open Tool →' : 'Sign in to Use'}
+                    </button>
+                </div>
+            `}).join('');
+        }
+    }
+
+    // ============================================
+    // Main Initialization
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.ForgeAuth !== 'undefined' && window.ForgeAuth.renderAuthWidget) {
+            window.ForgeAuth.renderAuthWidget();
+        } else {
+            const authWidget = document.getElementById('authWidget');
+            if (authWidget) {
+                const user = JSON.parse(localStorage.getItem('forge_user'));
+                if (user) {
+                    authWidget.innerHTML = `
+                        <div class="user-greeting">
+                            <i class="fas fa-user-circle"></i> ${user.email.split('@')[0]}
+                            <span class="plan-badge">${user.plan === 'pro' ? 'PRO ⭐' : 'FREE'}</span>
+                        </div>
+                        <button class="btn btn-ghost" onclick="localStorage.removeItem('forge_user');localStorage.removeItem('forge_token');location.reload();">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    `;
+                } else {
+                    authWidget.innerHTML = `
+                        <button class="btn btn-outline" onclick="window.ForgeAuth?.openAuthModal ? window.ForgeAuth.openAuthModal('login') : alert('Please refresh the page')">
+                            <i class="fas fa-key"></i> Sign in
+                        </button>
+                        <button class="btn btn-primary" onclick="window.ForgeAuth?.openAuthModal ? window.ForgeAuth.openAuthModal('signup') : alert('Please refresh the page')">
+                            <i class="fas fa-user-plus"></i> Get started
+                        </button>
+                    `;
+                }
+            }
+        }
+
+        renderTools();
+    });
+</script>
+</body>
+</html>

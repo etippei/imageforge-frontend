@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Upscaler - ImageForge</title>
+    <link rel="stylesheet" href="../common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="tool-page-container">
+    <header class="site-header">
+        <div class="logo"><h1>ImageForge<span>AI</span></h1><span>AI Upscaler</span></div>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link">🏠 Home</a>
+            <a href="upscaler.html" class="nav-link active">✨ Upscaler</a>
+            <a href="compressor.html" class="nav-link">🗜️ Compressor</a>
+            <a href="bg-remover.html" class="nav-link">🎨 BG Remover</a>
+            <a href="convert.html" class="nav-link">🔄 PNG to JPG</a>
+            <a href="resize.html" class="nav-link">📏 Resize</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="tool-card-large">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+        <h1><i class="fas fa-magic" style="color:#2563eb"></i> AI Image Upscaler</h1>
+        <p>Enlarge your images up to 2x with Real-ESRGAN AI super-resolution</p>
+
+        <div id="usageDisplay" style="margin: 16px 0;"></div>
+
+        <div class="dropzone" id="dropzone">
+            <i class="fas fa-cloud-upload-alt fa-2x" style="color:#3b82f6"></i>
+            <p style="margin: 10px 0;">Drag & drop or click to upload image</p>
+            <p style="font-size:0.8rem; color:#64748b;">PNG, JPG, WEBP · AI upscale 2x</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none">
+        </div>
+
+        <div id="previewArea" class="preview-area" style="display: none;">
+            <div class="preview-box">
+                <strong>Original</strong>
+                <img id="originalImg" class="preview-img" alt="original">
+                <div id="originalSize"></div>
+            </div>
+            <div class="preview-box">
+                <strong>AI Upscaled ✨</strong>
+                <img id="upscaledImg" class="preview-img" alt="upscaled" style="display:none">
+                <div id="loaderDiv"><i class="fas fa-spinner fa-pulse"></i> Processing...</div>
+                <div id="progressText">Waiting to start...</div>
+                <div id="upscaledSize"></div>
+            </div>
+        </div>
+
+        <div id="actionButtons" class="action-buttons" style="display: none;">
+            <button class="btn btn-primary" id="processBtn"><i class="fas fa-expand-alt"></i> AI Upscale 2x</button>
+            <button class="btn btn-outline" id="resetBtn">Clear</button>
+            <button class="btn btn-outline" id="downloadBtn" style="background:#eef2ff;" disabled><i class="fas fa-download"></i> Download Result</button>
+        </div>
+    </div>
+    <footer>© 2026 AI ImageForge — Powered by Real-ESRGAN</footer>
+</div>
+<script src="../common.js"></script>
+<script>
+let originalFile = null;
+let resultBase64 = null;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const previewArea = document.getElementById('previewArea');
+const actionButtons = document.getElementById('actionButtons');
+const originalImg = document.getElementById('originalImg');
+const upscaledImg = document.getElementById('upscaledImg');
+const loaderDiv = document.getElementById('loaderDiv');
+const progressText = document.getElementById('progressText');
+const processBtn = document.getElementById('processBtn');
+const resetBtn = document.getElementById('resetBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const originalSizeSpan = document.getElementById('originalSize');
+
+window.ForgeAuth.displayUsageInfo('usageDisplay', 'upscaler');
+
+async function handleFile(file) {
+    const user = window.ForgeAuth.currentUser();
+    if (!user) {
+        window.ForgeAuth.openAuthModal('login');
+        return;
+    }
+    try {
+        const usage = await window.ForgeAuth.getUsage();
+        const tool = usage.tools.upscaler;
+        if (!tool.isPro && tool.remaining <= 0) {
+            alert(`⚠️ Daily limit reached (${tool.used}/${tool.limit}). Upgrade to Pro.`);
+            return;
+        }
+    } catch (e) {
+        alert('Could not check usage. Please refresh.');
+        return;
+    }
+    originalFile = file;
+    const dataUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+        originalImg.src = dataUrl;
+        originalSizeSpan.innerHTML = `${img.width}×${img.height} · ${window.ForgeAuth.formatFileSize(file.size)}`;
+        previewArea.style.display = 'flex';
+        actionButtons.style.display = 'flex';
+        upscaledImg.style.display = 'none';
+        resultBase64 = null;
+        downloadBtn.disabled = true;
+        loaderDiv.style.display = 'block';
+        progressText.textContent = 'Ready to upscale';
+    };
+    img.src = dataUrl;
+}
+
+processBtn.addEventListener('click', async () => {
+    if (!originalFile) return;
+    const user = window.ForgeAuth.currentUser();
+    if (!user) { window.ForgeAuth.openAuthModal('login'); return; }
+
+    processBtn.disabled = true;
+    loaderDiv.style.display = 'block';
+    progressText.textContent = 'Submitting to AI server...';
+
+    try {
+        const response = await window.ForgeAuth.uploadToVPS('/upscale', originalFile);
+        progressText.textContent = 'AI processing (may take 10-60 seconds)...';
+        const result = await window.ForgeAuth.pollResult(response.task_id);
+        resultBase64 = result.result;
+        upscaledImg.src = `data:image/png;base64,${resultBase64}`;
+        upscaledImg.style.display = 'block';
+        loaderDiv.style.display = 'none';
+        progressText.textContent = `✅ Completed in ${(result.processing_time || 0).toFixed(1)}s`;
+        downloadBtn.disabled = false;
+        window.ForgeAuth.displayUsageInfo('usageDisplay', 'upscaler');
+    } catch (error) {
+        loaderDiv.style.display = 'none';
+        progressText.textContent = `❌ Error: ${error.message}`;
+        alert(`Processing failed: ${error.message}`);
+    } finally {
+        processBtn.disabled = false;
+    }
+});
+
+resetBtn.addEventListener('click', () => {
+    previewArea.style.display = 'none';
+    actionButtons.style.display = 'none';
+    originalFile = null;
+    resultBase64 = null;
+    fileInput.value = '';
+    upscaledImg.src = '';
+    originalImg.src = '';
+});
+
+downloadBtn.addEventListener('click', () => {
+    if (resultBase64) window.ForgeAuth.downloadBase64(resultBase64, 'ai_upscaled_2x.png', 'image/png');
+});
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('active'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('active'));
+dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('active');
+    if (e.dataTransfer.files[0]?.type.startsWith('image/')) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', (e) => { if(e.target.files[0]) handleFile(e.target.files[0]); });
+</script>
+</body>
+</html>

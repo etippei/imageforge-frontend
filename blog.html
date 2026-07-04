@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - ImageForge AI</title>
+    <link rel="stylesheet" href="common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .nav-link {
+            font-size: 1.15rem !important;
+            font-weight: 600 !important;
+            padding: 0.7rem 1.4rem !important;
+        }
+        @media (max-width: 768px) {
+            .nav-link { font-size: 0.95rem !important; padding: 0.4rem 0.8rem !important; }
+        }
+        @media (max-width: 480px) {
+            .nav-link { font-size: 0.8rem !important; padding: 0.3rem 0.6rem !important; }
+        }
+
+        .blog-hero {
+            background: linear-gradient(135deg, #f0fdf4, #d1fae5, #a7f3d0) !important;
+        }
+        .blog-card-full {
+            border-left: 4px solid #2563eb;
+            transition: all 0.3s;
+        }
+        .blog-card-full:nth-child(2) { border-left-color: #8b5cf6; }
+        .blog-card-full:nth-child(3) { border-left-color: #059669; }
+        .blog-card-full:nth-child(4) { border-left-color: #d97706; }
+        .blog-card-full:nth-child(5) { border-left-color: #dc2626; }
+        .blog-card-full:nth-child(6) { border-left-color: #7c3aed; }
+        .blog-card-full:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+        .blog-image-icon {
+            background: linear-gradient(135deg, #2563eb15, #7c3aed15) !important;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            border-color: #7c3aed !important;
+        }
+        .blog-modal {
+            border-top: 4px solid linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="site-header">
+        <div class="logo">
+            <h1>ImageForge<span>AI</span></h1>
+            <span>Professional AI Image Toolkit</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="blog.html" class="nav-link active">📝 Blog</a>
+            <a href="help.html" class="nav-link">❓ Help</a>
+            <a href="contact.html" class="nav-link">📧 Contact</a>
+            <a href="pricing.html" class="nav-link">💰 Pricing</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="blog-hero">
+        <h1>📝 ImageForge Blog</h1>
+        <p>Tips, tutorials & news about AI image processing — updated weekly</p>
+    </div>
+
+    <div class="blog-filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Tutorial">Tutorials</button>
+        <button class="filter-btn" data-filter="Tips">Tips</button>
+        <button class="filter-btn" data-filter="Guide">Guides</button>
+        <button class="filter-btn" data-filter="Performance">Performance</button>
+        <button class="filter-btn" data-filter="Trends">Trends</button>
+    </div>
+
+    <div class="blog-grid-full" id="blogGrid"></div>
+
+    <div class="blog-pagination" id="blogPagination">
+        <button class="page-btn" id="prevPage" disabled>← Previous</button>
+        <span id="pageInfo">Page 1</span>
+        <button class="page-btn" id="nextPage">Next →</button>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left"><i class="fas fa-microchip"></i> ImageForge AI — Professional upscaling & editing suite.</div>
+            <div class="footer-right">
+                <a href="pricing.html">Pricing</a>
+                <a href="contact.html">Contact</a>
+                <a href="help.html">Help</a>
+                <a href="blog.html">Blog</a>
+                <a href="#" onclick="window.ForgeAuth?.openAuthModal ? window.ForgeAuth.openAuthModal('login') : alert('Please refresh'); return false;">Sign In</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 ImageForge AI. All rights reserved.</div>
+    </footer>
+</div>
+
+<script src="common.js"></script>
+<script>
+    const blogPosts = [
+        { id: 1, title: 'How to Upscale Images Without Losing Quality', excerpt: 'Learn the best techniques for AI-powered image upscaling. Real-ESRGAN technology can enlarge images up to 4x while preserving details.', category: 'Tutorial', date: '2026-06-28', readTime: '5 min read', image: 'fa-image', fullContent: 'Complete guide to AI upscaling with Real-ESRGAN...' },
+        { id: 2, title: 'Top 5 Reasons to Remove Backgrounds with AI', excerpt: 'AI background removal saves hours of manual editing. Discover how it can transform your product photos, portraits, and marketing materials.', category: 'Tips', date: '2026-06-25', readTime: '4 min read', image: 'fa-eraser', fullContent: 'AI background removal is revolutionizing image editing...' },
+        { id: 3, title: 'PNG vs JPG: Which Format Should You Use?', excerpt: 'Understanding the differences between PNG and JPG formats is crucial for web performance. Learn when to use each format for optimal results.', category: 'Guide', date: '2026-06-20', readTime: '6 min read', image: 'fa-exchange-alt', fullContent: 'Choosing the right image format for your needs...' },
+        { id: 4, title: 'Image Compression Techniques for Faster Websites', excerpt: 'Compressing images properly can reduce page load time by 40% or more. Here are the best practices for image optimization.', category: 'Performance', date: '2026-06-15', readTime: '7 min read', image: 'fa-compress', fullContent: 'Modern image compression techniques for web performance...' },
+        { id: 5, title: 'AI in Photography: The Future of Image Editing', excerpt: 'Artificial intelligence is revolutionizing photography. From auto-enhancement to content-aware fill, explore the latest AI editing tools.', category: 'Trends', date: '2026-06-10', readTime: '8 min read', image: 'fa-camera', fullContent: 'How AI is transforming the photography industry...' },
+        { id: 6, title: 'How to Resize Images for Social Media (2026 Guide)', excerpt: 'Different social media platforms require different image sizes. Our guide covers optimal dimensions for Instagram, Facebook, Twitter, and more.', category: 'Tutorial', date: '2026-06-05', readTime: '5 min read', image: 'fa-arrows-alt', fullContent: 'Complete social media image size guide for 2026...' },
+        { id: 7, title: 'Batch Processing: Save Hours of Image Editing Work', excerpt: 'Learn how to process multiple images at once using AI tools. Perfect for e-commerce product photos and bulk editing.', category: 'Tips', date: '2026-06-01', readTime: '6 min read', image: 'fa-layer-group', fullContent: 'Batch processing workflow for image editing...' },
+        { id: 8, title: 'The Rise of AI-Generated Images: What You Need to Know', excerpt: 'AI image generation is rapidly evolving. Explore the latest developments, ethical considerations, and how these tools complement traditional workflows.', category: 'Trends', date: '2026-05-25', readTime: '10 min read', image: 'fa-robot', fullContent: 'The state of AI image generation in 2026...' },
+        { id: 9, title: 'Optimize Images for SEO: A Complete Checklist', excerpt: 'Image SEO can significantly boost your search rankings. This checklist covers file naming, alt text, compression, and structured data.', category: 'Guide', date: '2026-05-20', readTime: '7 min read', image: 'fa-search', fullContent: 'Complete SEO checklist for website images...' }
+    ];
+
+    let currentPage = 1;
+    const postsPerPage = 6;
+    let currentFilter = 'all';
+    let filteredPosts = [...blogPosts];
+
+    function getFilteredPosts() {
+        if (currentFilter === 'all') return [...blogPosts];
+        return blogPosts.filter(p => p.category === currentFilter);
+    }
+
+    function renderBlog() {
+        const container = document.getElementById('blogGrid');
+        const filtered = getFilteredPosts();
+        filteredPosts = filtered;
+        const totalPages = Math.ceil(filtered.length / postsPerPage);
+        const start = (currentPage - 1) * postsPerPage;
+        const pagePosts = filtered.slice(start, start + postsPerPage);
+
+        if (container) {
+            if (pagePosts.length === 0) {
+                container.innerHTML = `<div class="blog-empty"><i class="fas fa-search fa-3x" style="color:#94a3b8;"></i><p style="color:#64748b;">No articles found.</p><button class="btn btn-outline" onclick="currentFilter='all';currentPage=1;renderBlog();updatePagination();">View All</button></div>`;
+                return;
+            }
+            container.innerHTML = pagePosts.map(post => `
+                <div class="blog-card-full" data-category="${post.category}">
+                    <div class="blog-image-icon"><i class="fas ${post.image}"></i></div>
+                    <div class="blog-content">
+                        <div class="blog-category">${post.category}</div>
+                        <h3 class="blog-title">${post.title}</h3>
+                        <p class="blog-excerpt">${post.excerpt}</p>
+                        <div class="blog-meta"><span><i class="far fa-calendar"></i> ${post.date}</span><span><i class="far fa-clock"></i> ${post.readTime}</span></div>
+                        <a href="#" class="blog-read-more" onclick="openBlogModal(${post.id}); return false;">Read Full Article →</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        updatePagination();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages || 1}`;
+        document.getElementById('prevPage').disabled = currentPage <= 1;
+        document.getElementById('nextPage').disabled = currentPage >= totalPages;
+    }
+
+    function openBlogModal(postId) {
+        const post = blogPosts.find(p => p.id === postId);
+        if (!post) return;
+        const modal = document.createElement('div');
+        modal.className = 'blog-modal-overlay';
+        modal.innerHTML = `
+            <div class="blog-modal">
+                <button class="blog-modal-close" onclick="this.closest('.blog-modal-overlay').remove()">×</button>
+                <div class="blog-modal-category">${post.category}</div>
+                <h2 class="blog-modal-title">${post.title}</h2>
+                <div class="blog-modal-meta"><span><i class="far fa-calendar"></i> ${post.date}</span><span><i class="far fa-clock"></i> ${post.readTime}</span></div>
+                <div class="blog-modal-body">
+                    <p>${post.fullContent || post.excerpt}</p>
+                    <div style="margin-top:24px;padding:16px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;gap:12px;">
+                        <i class="fas fa-envelope" style="color:#2563eb;"></i>
+                        <span style="font-size:0.9rem;color:#475569;">Enjoyed this article? <a href="contact.html" style="color:#2563eb;font-weight:600;">Contact us</a> for more tips.</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', function(e) { if (e.target === this) this.remove(); });
+        document.addEventListener('keydown', function escHandler(e) { if (e.key === 'Escape') { modal.remove(); document.removeEventListener('keydown', escHandler); } });
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            currentPage = 1;
+            renderBlog();
+        });
+    });
+
+    document.getElementById('prevPage').addEventListener('click', function() {
+        if (currentPage > 1) { currentPage--; renderBlog(); document.getElementById('blogGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+    document.getElementById('nextPage').addEventListener('click', function() {
+        const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+        if (currentPage < totalPages) { currentPage++; renderBlog(); document.getElementById('blogGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.ForgeAuth !== 'undefined' && window.ForgeAuth.renderAuthWidget) {
+            window.ForgeAuth.renderAuthWidget();
+        }
+        renderBlog();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resize Image - ImageForge</title>
+    <link rel="stylesheet" href="../common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="tool-page-container">
+    <header class="site-header">
+        <div class="logo"><h1>ImageForge<span>AI</span></h1><span>Resize</span></div>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link">🏠 Home</a>
+            <a href="upscaler.html" class="nav-link">✨ Upscaler</a>
+            <a href="compressor.html" class="nav-link">🗜️ Compressor</a>
+            <a href="bg-remover.html" class="nav-link">🎨 BG Remover</a>
+            <a href="convert.html" class="nav-link">🔄 PNG to JPG</a>
+            <a href="resize.html" class="nav-link active">📏 Resize</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="tool-card-large">
+        <a href="../index.html" class="back-link">← Back</a>
+        <h1><i class="fas fa-arrows-alt"></i> Resize Image</h1>
+        <p>Change image dimensions to custom width and height</p>
+        <div id="usageDisplay" style="margin: 16px 0;"></div>
+
+        <div class="dropzone" id="dropzone">
+            <i class="fas fa-cloud-upload-alt fa-2x"></i>
+            <p>Upload image</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none">
+        </div>
+
+        <div style="display:flex; gap:1rem; justify-content:center; margin:1rem 0; flex-wrap:wrap">
+            <input type="number" id="widthInput" placeholder="Width (px)" style="padding:10px; border-radius:40px; border:1px solid #cbd5e1; width:130px">
+            <span>×</span>
+            <input type="number" id="heightInput" placeholder="Height (px)" style="padding:10px; border-radius:40px; border:1px solid #cbd5e1; width:130px">
+        </div>
+
+        <div id="previewArea" class="preview-area" style="display:none">
+            <div class="preview-box"><strong>Original</strong><img id="originalImg" class="preview-img"><div id="originalDim"></div></div>
+            <div class="preview-box"><strong>Resized</strong><img id="resultImg" class="preview-img" style="display:none"><div id="resultDim"></div><div id="loaderDiv"></div></div>
+        </div>
+
+        <div id="actionButtons" class="action-buttons" style="display:none">
+            <button class="btn btn-primary" id="processBtn">Apply Resize</button>
+            <button class="btn btn-outline" id="resetBtn">Clear</button>
+            <button class="btn btn-outline" id="downloadBtn" disabled>Download</button>
+        </div>
+    </div>
+    <footer>© 2026 AI ImageForge — Powered by Sharp</footer>
+</div>
+<script src="../common.js"></script>
+<script>
+let originalFile = null;
+let resultBase64 = null;
+let originalWidth = 0, originalHeight = 0;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const previewArea = document.getElementById('previewArea');
+const actionButtons = document.getElementById('actionButtons');
+const originalImg = document.getElementById('originalImg');
+const resultImg = document.getElementById('resultImg');
+const loaderDiv = document.getElementById('loaderDiv');
+const processBtn = document.getElementById('processBtn');
+const resetBtn = document.getElementById('resetBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const widthInput = document.getElementById('widthInput');
+const heightInput = document.getElementById('heightInput');
+const originalDim = document.getElementById('originalDim');
+const resultDim = document.getElementById('resultDim');
+
+window.ForgeAuth.displayUsageInfo('usageDisplay', 'resize');
+
+async function handleFile(file) {
+    const user = window.ForgeAuth.currentUser();
+    if (!user) { window.ForgeAuth.openAuthModal('login'); return; }
+    try {
+        const usage = await window.ForgeAuth.getUsage();
+        if (!usage.tools.resize.isPro && usage.tools.resize.remaining <= 0) {
+            alert(`⚠️ Daily limit reached. Upgrade to Pro.`);
+            return;
+        }
+    } catch (e) { alert('Could not check usage.'); return; }
+    originalFile = file;
+    const dataUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+        originalWidth = img.width;
+        originalHeight = img.height;
+        originalImg.src = dataUrl;
+        originalDim.innerHTML = `${originalWidth}×${originalHeight}`;
+        widthInput.value = originalWidth;
+        heightInput.value = originalHeight;
+        previewArea.style.display = 'flex';
+        actionButtons.style.display = 'flex';
+        resultImg.style.display = 'none';
+        resultBase64 = null;
+        downloadBtn.disabled = true;
+        loaderDiv.innerHTML = 'Set dimensions and click Resize';
+    };
+    img.src = dataUrl;
+}
+
+processBtn.addEventListener('click', async () => {
+    if (!originalFile) return;
+    const user = window.ForgeAuth.currentUser();
+    if (!user) { window.ForgeAuth.openAuthModal('login'); return; }
+
+    const newWidth = parseInt(widthInput.value);
+    const newHeight = parseInt(heightInput.value);
+    if (isNaN(newWidth) || isNaN(newHeight) || newWidth <= 0 || newHeight <= 0) {
+        alert('Valid dimensions required');
+        return;
+    }
+
+    processBtn.disabled = true;
+    loaderDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Resizing...';
+
+    try {
+        const response = await window.ForgeAuth.uploadToVPS('/sharp/resize', originalFile, {
+            width: newWidth.toString(),
+            height: newHeight.toString()
+        });
+        const result = await window.ForgeAuth.pollResult(response.task_id);
+        resultBase64 = result.result;
+        resultImg.src = `data:image/png;base64,${resultBase64}`;
+        resultImg.style.display = 'block';
+        resultDim.innerHTML = `${newWidth}×${newHeight}`;
+        loaderDiv.innerHTML = `✅ Resized in ${(result.processing_time || 0).toFixed(0)}ms`;
+        downloadBtn.disabled = false;
+        window.ForgeAuth.displayUsageInfo('usageDisplay', 'resize');
+    } catch (error) {
+        loaderDiv.innerHTML = `❌ Error: ${error.message}`;
+        alert(`Resize failed: ${error.message}`);
+    } finally {
+        processBtn.disabled = false;
+    }
+});
+
+resetBtn.onclick = () => { previewArea.style.display = 'none'; actionButtons.style.display = 'none'; originalFile = null; fileInput.value = ''; };
+downloadBtn.onclick = () => { if(resultBase64) window.ForgeAuth.downloadBase64(resultBase64, 'resized.png', 'image/png'); };
+dropzone.onclick = () => fileInput.click();
+dropzone.ondragover = e => { e.preventDefault(); dropzone.classList.add('active'); };
+dropzone.ondragleave = () => dropzone.classList.remove('active');
+dropzone.ondrop = e => { e.preventDefault(); dropzone.classList.remove('active'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+fileInput.onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); };
+</script>
+</body>
+</html>

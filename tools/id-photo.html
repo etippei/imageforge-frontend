@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Photo Maker - ImageForge AI</title>
+    <link rel="stylesheet" href="../common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== 导航栏字体放大 ===== */
+        .nav-link {
+            font-size: 1.15rem !important;
+            font-weight: 600 !important;
+            padding: 0.7rem 1.4rem !important;
+        }
+        @media (max-width: 768px) {
+            .nav-link { font-size: 0.95rem !important; padding: 0.4rem 0.8rem !important; }
+        }
+        @media (max-width: 480px) {
+            .nav-link { font-size: 0.8rem !important; padding: 0.3rem 0.6rem !important; }
+        }
+
+        .tool-page-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .tool-card-large {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .dropzone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1.5rem;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            background: #fafcff;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dropzone.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        .dropzone i {
+            font-size: 2.5rem;
+            color: #3b82f6;
+        }
+
+        .options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            justify-content: center;
+            align-items: center;
+        }
+        .options-row label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .options-row select,
+        .options-row input[type="color"] {
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+        }
+        .options-row input[type="color"] {
+            width: 44px;
+            height: 44px;
+            padding: 2px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+        }
+        .options-row input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .options-row input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        .preview-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+        .preview-box {
+            flex: 1;
+            min-width: 200px;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .preview-box .preview-img {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 0.75rem;
+            margin: 12px 0;
+        }
+        .preview-box .preview-img.bg-preview {
+            background-image: 
+                linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+                linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+                linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            border: 2px solid #2563eb !important;
+            color: #2563eb !important;
+            background: transparent !important;
+        }
+        .btn-outline:hover {
+            background: #2563eb !important;
+            color: white !important;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .size-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .size-btn:hover {
+            border-color: #2563eb;
+        }
+        .size-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .usage-info {
+            background: #f1f5f9;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        @media (max-width: 680px) {
+            .tool-card-large { padding: 1.2rem; }
+            .options-row { gap: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="tool-page-container">
+    <header class="site-header">
+        <div class="logo">
+            <h1>ImageForge<span>AI</span></h1>
+            <span>ID Photo Maker</span>
+        </div>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link">🏠 Home</a>
+            <a href="../blog.html" class="nav-link">📝 Blog</a>
+            <a href="../help.html" class="nav-link">❓ Help</a>
+            <a href="../contact.html" class="nav-link">📧 Contact</a>
+            <a href="../pricing.html" class="nav-link">💰 Pricing</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="tool-card-large">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
+            <h1 style="font-size:1.8rem; font-weight:700;"><i class="fas fa-id-card" style="color:#f59e0b;"></i> ID Photo Maker</h1>
+            <span class="hot-badge" style="background:#f59e0b;color:white;font-size:0.7rem;font-weight:700;padding:0.2rem 0.8rem;border-radius:30px;text-transform:uppercase;">🔥 Hot</span>
+        </div>
+        <p style="color:#475569; margin-bottom:1.2rem;">Replace background & resize for passport, visa, or professional profile photos</p>
+
+        <div id="usageDisplay" class="usage-info"></div>
+
+        <!-- 选项栏 -->
+        <div class="options-row">
+            <label>
+                <i class="fas fa-palette"></i> Background
+                <select id="bgColorSelect">
+                    <option value="#ffffff">⬜ White</option>
+                    <option value="#ef4444">🟥 Red</option>
+                    <option value="#3b82f6">🟦 Blue</option>
+                    <option value="#22c55e">🟩 Green</option>
+                    <option value="#000000">⬛ Black</option>
+                    <option value="custom">🎨 Custom</option>
+                </select>
+            </label>
+            <label>
+                <i class="fas fa-vector-square"></i> Size
+                <select id="sizeSelect">
+                    <option value="295,413">1 inch (295×413)</option>
+                    <option value="413,531">2 inch (413×531)</option>
+                    <option value="354,472">Passport (354×472)</option>
+                    <option value="600,800">Visa (600×800)</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </label>
+            <label id="customSizeLabel" style="display:none;">
+                <input type="number" id="customWidth" placeholder="W" style="width:60px;padding:0.4rem 0.6rem;border-radius:40px;border:1px solid #cbd5e1;text-align:center;"> ×
+                <input type="number" id="customHeight" placeholder="H" style="width:60px;padding:0.4rem 0.6rem;border-radius:40px;border:1px solid #cbd5e1;text-align:center;">
+            </label>
+            <label>
+                <i class="fas fa-arrows-rotate"></i> DPI
+                <select id="dpiSelect">
+                    <option value="72">72 DPI</option>
+                    <option value="150">150 DPI</option>
+                    <option value="300" selected>300 DPI</option>
+                    <option value="600">600 DPI</option>
+                </select>
+            </label>
+        </div>
+
+        <!-- 颜色选择器（自定义） -->
+        <div id="customColorPicker" style="display:none; text-align:center; margin-bottom:1rem;">
+            <input type="color" id="customColorInput" value="#2563eb">
+        </div>
+
+        <!-- 上传区 -->
+        <div class="dropzone" id="dropzone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p style="margin: 12px 0; font-weight:500;">Drag & drop or click to upload photo</p>
+            <p style="font-size:0.8rem; color:#64748b;">Supports JPG, PNG · Portrait photos work best</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- 预览区 -->
+        <div id="previewArea" class="preview-area" style="display:none;">
+            <div class="preview-box">
+                <strong>Original</strong>
+                <img id="originalImg" class="preview-img" alt="original">
+                <div id="originalInfo" style="font-size:0.8rem;color:#64748b;"></div>
+            </div>
+            <div class="preview-box">
+                <strong>Result ✨</strong>
+                <img id="resultImg" class="preview-img bg-preview" alt="result" style="display:none;">
+                <div id="loaderDiv" style="padding:12px 0;"><i class="fas fa-spinner fa-pulse"></i> Processing...</div>
+                <div id="resultInfo" style="font-size:0.8rem;color:#64748b;"></div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div id="actionButtons" class="action-buttons" style="display:none;">
+            <button class="btn btn-primary" id="processBtn"><i class="fas fa-wand-magic-sparkles"></i> Generate ID Photo</button>
+            <button class="btn btn-outline" id="resetBtn">Clear</button>
+            <button class="btn btn-outline" id="downloadBtn" disabled><i class="fas fa-download"></i> Download</button>
+        </div>
+
+        <!-- 尺寸预设快捷按钮 -->
+        <div style="margin-top:1.2rem; text-align:center;">
+            <span style="font-size:0.8rem; color:#64748b; margin-right:8px;">Quick sizes:</span>
+            <div class="size-options" style="display:inline-flex;">
+                <button class="size-btn active" data-w="295" data-h="413">1 inch</button>
+                <button class="size-btn" data-w="413" data-h="531">2 inch</button>
+                <button class="size-btn" data-w="354" data-h="472">Passport</button>
+                <button class="size-btn" data-w="600" data-h="800">Visa</button>
+            </div>
+        </div>
+    </div>
+
+    <footer style="margin-top:2rem; text-align:center; padding:1.2rem; border-top:1px solid #e2e8f0; font-size:0.8rem; color:#5b6e8c;">
+        <i class="fas fa-microchip"></i> Powered by Rembg AI · ImageForge © 2026
+    </footer>
+</div>
+
+<script src="../common.js"></script>
+<script>
+    // ============================================
+    // State
+    // ============================================
+    let originalFile = null;
+    let resultBlobUrl = null;
+    let processing = false;
+
+    // DOM refs
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const previewArea = document.getElementById('previewArea');
+    const actionButtons = document.getElementById('actionButtons');
+    const originalImg = document.getElementById('originalImg');
+    const resultImg = document.getElementById('resultImg');
+    const loaderDiv = document.getElementById('loaderDiv');
+    const processBtn = document.getElementById('processBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const originalInfo = document.getElementById('originalInfo');
+    const resultInfo = document.getElementById('resultInfo');
+    const usageDisplay = document.getElementById('usageDisplay');
+
+    const bgColorSelect = document.getElementById('bgColorSelect');
+    const customColorPicker = document.getElementById('customColorPicker');
+    const customColorInput = document.getElementById('customColorInput');
+    const sizeSelect = document.getElementById('sizeSelect');
+    const customSizeLabel = document.getElementById('customSizeLabel');
+    const customWidth = document.getElementById('customWidth');
+    const customHeight = document.getElementById('customHeight');
+    const dpiSelect = document.getElementById('dpiSelect');
+    const sizeBtns = document.querySelectorAll('.size-btn');
+
+    // ============================================
+    // Usage Display
+    // ============================================
+    window.ForgeAuth.displayUsageInfo('usageDisplay', 'idphoto');
+
+    // ============================================
+    // Options Logic
+    // ============================================
+    bgColorSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customColorPicker.style.display = 'block';
+        } else {
+            customColorPicker.style.display = 'none';
+        }
+    });
+
+    sizeSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customSizeLabel.style.display = 'flex';
+        } else {
+            customSizeLabel.style.display = 'none';
+            const [w, h] = this.value.split(',').map(Number);
+            // 更新快捷按钮状态
+            sizeBtns.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.w) === w && parseInt(btn.dataset.h) === h);
+            });
+        }
+    });
+
+    sizeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            sizeBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const w = parseInt(this.dataset.w);
+            const h = parseInt(this.dataset.h);
+            // 如果sizeSelect有匹配的选项则选中，否则设为custom并填充值
+            let matched = false;
+            for (let opt of sizeSelect.options) {
+                if (opt.value === `${w},${h}`) {
+                    sizeSelect.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                sizeSelect.value = 'custom';
+                customSizeLabel.style.display = 'flex';
+                customWidth.value = w;
+                customHeight.value = h;
+            } else {
+                customSizeLabel.style.display = 'none';
+            }
+        });
+    });
+
+    function getSelectedColor() {
+        if (bgColorSelect.value === 'custom') {
+            return customColorInput.value;
+        }
+        return bgColorSelect.value;
+    }
+
+    function getSelectedSize() {
+        if (sizeSelect.value === 'custom') {
+            return { width: parseInt(customWidth.value) || 295, height: parseInt(customHeight.value) || 413 };
+        }
+        const [w, h] = sizeSelect.value.split(',').map(Number);
+        return { width: w, height: h };
+    }
+
+    function getSelectedDPI() {
+        return parseInt(dpiSelect.value) || 300;
+    }
+
+    // ============================================
+    // File Handling
+    // ============================================
+    async function handleFile(file) {
+        const user = window.ForgeAuth.currentUser();
+        if (!user) {
+            window.ForgeAuth.openAuthModal('login');
+            return;
+        }
+        try {
+            const usage = await window.ForgeAuth.getUsage();
+            const tool = usage.tools.idphoto;
+            if (!tool) {
+                // 如果后端还没配置idphoto的usage记录，降级使用rembg的配额
+                const fallbackTool = usage.tools.rembg;
+                if (fallbackTool && !fallbackTool.isPro && fallbackTool.remaining <= 0) {
+                    alert(`⚠️ Daily limit reached. Upgrade to Pro for unlimited.`);
+                    return;
+                }
+            } else if (!tool.isPro && tool.remaining <= 0) {
+                alert(`⚠️ Daily limit reached (${tool.used}/${tool.limit}). Upgrade to Pro.`);
+                return;
+            }
+        } catch (e) {
+            // 静默降级
+        }
+
+        originalFile = file;
+        const dataUrl = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            originalImg.src = dataUrl;
+            originalInfo.innerHTML = `${img.width}×${img.height} · ${window.ForgeAuth.formatFileSize(file.size)}`;
+            previewArea.style.display = 'flex';
+            actionButtons.style.display = 'flex';
+            resultImg.style.display = 'none';
+            resultBlobUrl = null;
+            downloadBtn.disabled = true;
+            loaderDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Ready to generate...';
+            resultInfo.textContent = '';
+        };
+        img.src = dataUrl;
+    }
+
+    // ============================================
+    // Main Process: 调用rembg API + 前端合成裁剪
+    // ============================================
+    processBtn.addEventListener('click', async () => {
+        if (!originalFile || processing) return;
+        const user = window.ForgeAuth.currentUser();
+        if (!user) {
+            window.ForgeAuth.openAuthModal('login');
+            return;
+        }
+
+        processing = true;
+        processBtn.disabled = true;
+        loaderDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Removing background... (AI processing)';
+        resultImg.style.display = 'none';
+
+        try {
+            // Step 1: 调用rembg API获取透明背景图
+            const response = await window.ForgeAuth.uploadToVPS('/rembg', originalFile);
+            const taskId = response.task_id;
+            loaderDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> AI is working... (10-30s)';
+
+            const result = await window.ForgeAuth.pollResult(taskId, 45, 2000);
+            const base64Data = result.result;
+
+            // Step 2: 前端合成背景 + 裁剪
+            loaderDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Rendering ID photo...';
+
+            const bgColor = getSelectedColor();
+            const size = getSelectedSize();
+            const dpi = getSelectedDPI();
+
+            // 计算像素尺寸（基于DPI，1英寸 = DPI像素）
+            // 但用户期望的是像素尺寸，所以我们直接用用户指定的宽高
+            const finalBlob = await renderIDPhoto(base64Data, bgColor, size.width, size.height);
+
+            // Step 3: 显示结果
+            resultBlobUrl = URL.createObjectURL(finalBlob);
+            resultImg.src = resultBlobUrl;
+            resultImg.style.display = 'block';
+            resultInfo.innerHTML = `${size.width}×${size.height} · ${window.ForgeAuth.formatFileSize(finalBlob.size)} · ${dpi} DPI`;
+            loaderDiv.innerHTML = '✅ ID Photo ready!';
+            downloadBtn.disabled = false;
+
+            // 记录使用次数
+            window.ForgeAuth.incrementUsage();
+            window.ForgeAuth.displayUsageInfo('usageDisplay', 'idphoto');
+
+        } catch (error) {
+            loaderDiv.innerHTML = `❌ Error: ${error.message}`;
+            alert(`Processing failed: ${error.message}`);
+        } finally {
+            processing = false;
+            processBtn.disabled = false;
+        }
+    });
+
+    // ============================================
+    // Render ID Photo (前端合成 + 裁剪)
+    // ============================================
+    function renderIDPhoto(base64Data, bgColor, targetWidth, targetHeight) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = function() {
+                try {
+                    // 计算居中裁剪区域（保持比例，取中心）
+                    const srcAspect = img.width / img.height;
+                    const targetAspect = targetWidth / targetHeight;
+
+                    let sx, sy, sw, sh;
+                    if (srcAspect > targetAspect) {
+                        // 源图更宽：裁剪左右
+                        sh = img.height;
+                        sw = img.height * targetAspect;
+                        sx = (img.width - sw) / 2;
+                        sy = 0;
+                    } else {
+                        // 源图更高：裁剪上下
+                        sw = img.width;
+                        sh = img.width / targetAspect;
+                        sx = 0;
+                        sy = (img.height - sh) / 2;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+                    const ctx = canvas.getContext('2d');
+
+                    // 填充背景色
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+                    // 绘制人物（居中裁剪并缩放到目标尺寸）
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+
+                    // 转为Blob
+                    canvas.toBlob((blob) => {
+                        if (blob) resolve(blob);
+                        else reject(new Error('Failed to render image'));
+                    }, 'image/png');
+                } catch (err) {
+                    reject(err);
+                }
+            };
+            img.onerror = () => reject(new Error('Failed to load image data'));
+            img.src = `data:image/png;base64,${base64Data}`;
+        });
+    }
+
+    // ============================================
+    // Reset & Download
+    // ============================================
+    resetBtn.addEventListener('click', function() {
+        previewArea.style.display = 'none';
+        actionButtons.style.display = 'none';
+        originalFile = null;
+        resultBlobUrl = null;
+        fileInput.value = '';
+        originalImg.src = '';
+        resultImg.src = '';
+        resultImg.style.display = 'none';
+        downloadBtn.disabled = true;
+        loaderDiv.innerHTML = '';
+    });
+
+    downloadBtn.addEventListener('click', function() {
+        if (resultBlobUrl) {
+            const a = document.createElement('a');
+            const size = getSelectedSize();
+            a.download = `id_photo_${size.width}x${size.height}.png`;
+            a.href = resultBlobUrl;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    });
+
+    // ============================================
+    // Dropzone Events
+    // ============================================
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('active'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('active'));
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('active');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) handleFile(file);
+    });
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+    });
+
+    // ============================================
+    // Init Auth
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.ForgeAuth !== 'undefined' && window.ForgeAuth.renderAuthWidget) {
+            window.ForgeAuth.renderAuthWidget();
+        }
+        // 默认显示自定义颜色选择器隐藏
+        customColorPicker.style.display = 'none';
+        customSizeLabel.style.display = 'none';
+    });
+</script>
+</body>
+</html>

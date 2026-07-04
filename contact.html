@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - ImageForge AI</title>
+    <link rel="stylesheet" href="common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .nav-link {
+            font-size: 1.15rem !important;
+            font-weight: 600 !important;
+            padding: 0.7rem 1.4rem !important;
+        }
+        @media (max-width: 768px) {
+            .nav-link { font-size: 0.95rem !important; padding: 0.4rem 0.8rem !important; }
+        }
+        @media (max-width: 480px) {
+            .nav-link { font-size: 0.8rem !important; padding: 0.3rem 0.6rem !important; }
+        }
+
+        .contact-hero {
+            background: linear-gradient(135deg, #fce7f3, #fbcfe8, #f9a8d4) !important;
+        }
+        .contact-hero h1, .contact-hero p { color: #831843 !important; }
+        .contact-info-card {
+            border-left: 4px solid #2563eb;
+            transition: all 0.3s;
+        }
+        .contact-info-card:nth-child(2) { border-left-color: #059669; }
+        .contact-info-card:nth-child(3) { border-left-color: #d97706; }
+        .contact-info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+        .contact-info-icon {
+            background: linear-gradient(135deg, #2563eb15, #7c3aed15) !important;
+        }
+        .contact-form-card {
+            border-top: 4px solid linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+        .contact-email-link {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: #7c3aed !important;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1) !important;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="site-header">
+        <div class="logo">
+            <h1>ImageForge<span>AI</span></h1>
+            <span>Professional AI Image Toolkit</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="blog.html" class="nav-link">📝 Blog</a>
+            <a href="help.html" class="nav-link">❓ Help</a>
+            <a href="contact.html" class="nav-link active">📧 Contact</a>
+            <a href="pricing.html" class="nav-link">💰 Pricing</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="contact-hero">
+        <h1>📧 Contact Us</h1>
+        <p>Have questions, feedback, or need assistance? We're here to help</p>
+    </div>
+
+    <div class="contact-page-container">
+        <div class="contact-info-cards">
+            <div class="contact-info-card">
+                <div class="contact-info-icon" style="background:#eef2ff;color:#2563eb;"><i class="fas fa-envelope"></i></div>
+                <h3>Email Support</h3>
+                <p>Our team will respond within 24 hours</p>
+                <a href="mailto:etiplpl@outlook.com" class="contact-email-link">etiplpl@outlook.com</a>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-info-icon" style="background:#ecfdf5;color:#059669;"><i class="fas fa-clock"></i></div>
+                <h3>Response Time</h3>
+                <p>We aim to respond to all inquiries within 24 hours</p>
+                <span class="contact-badge">Mon-Fri 9AM-6PM EST</span>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-info-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-shield-alt"></i></div>
+                <h3>Privacy Guaranteed</h3>
+                <p>Your information is secure and will never be shared</p>
+                <span class="contact-badge">100% Confidential</span>
+            </div>
+        </div>
+
+        <div class="contact-form-container">
+            <div class="contact-form-card">
+                <h2 style="margin-bottom:0.5rem;">Send Us a Message</h2>
+                <p style="color:#64748b; margin-bottom:1.5rem;">Fill in the form below and we'll get back to you as soon as possible</p>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactName">Your Name <span style="color:#ef4444;">*</span></label>
+                            <input type="text" id="contactName" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Email Address <span style="color:#ef4444;">*</span></label>
+                            <input type="email" id="contactEmail" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactSubject">Subject</label>
+                        <input type="text" id="contactSubject" placeholder="What's this about?">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMessage">Message <span style="color:#ef4444;">*</span></label>
+                        <textarea id="contactMessage" rows="5" placeholder="Describe your issue or question in detail..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary contact-submit"><i class="fas fa-paper-plane"></i> Send Message</button>
+                </form>
+                <div id="contactMessageStatus" style="margin-top:12px; text-align:center; font-weight:500;"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left"><i class="fas fa-microchip"></i> ImageForge AI — Professional upscaling & editing suite.</div>
+            <div class="footer-right">
+                <a href="pricing.html">Pricing</a>
+                <a href="contact.html">Contact</a>
+                <a href="help.html">Help</a>
+                <a href="blog.html">Blog</a>
+                <a href="#" onclick="window.ForgeAuth?.openAuthModal ? window.ForgeAuth.openAuthModal('login') : alert('Please refresh'); return false;">Sign In</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 ImageForge AI. All rights reserved.</div>
+    </footer>
+</div>
+
+<script src="common.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.ForgeAuth !== 'undefined' && window.ForgeAuth.renderAuthWidget) {
+            window.ForgeAuth.renderAuthWidget();
+        }
+
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('contactName').value.trim();
+                const email = document.getElementById('contactEmail').value.trim();
+                const subject = document.getElementById('contactSubject').value.trim() || 'Contact from ImageForge Website';
+                const message = document.getElementById('contactMessage').value.trim();
+                const statusEl = document.getElementById('contactMessageStatus');
+                if (!name || !email || !message) {
+                    statusEl.innerHTML = '<span style="color:#ef4444;">⚠️ Please fill in all required fields.</span>';
+                    return;
+                }
+                if (!email.includes('@')) {
+                    statusEl.innerHTML = '<span style="color:#ef4444;">⚠️ Please enter a valid email address.</span>';
+                    return;
+                }
+                window.location.href = `mailto:etiplpl@outlook.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message)}`;
+                statusEl.innerHTML = '<span style="color:#22c55e;">✅ Opening your email client... We\'ll respond within 24 hours.</span>';
+                setTimeout(() => {
+                    document.getElementById('contactName').value = '';
+                    document.getElementById('contactEmail').value = '';
+                    document.getElementById('contactSubject').value = '';
+                    document.getElementById('contactMessage').value = '';
+                    statusEl.innerHTML = '';
+                }, 5000);
+            });
+        }
+    });
+</script>
+</body>
+</html>

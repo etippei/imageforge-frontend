@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG to JPG - ImageForge</title>
+    <link rel="stylesheet" href="../common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="tool-page-container">
+    <header class="site-header">
+        <div class="logo"><h1>ImageForge<span>AI</span></h1><span>PNG to JPG</span></div>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-link">🏠 Home</a>
+            <a href="upscaler.html" class="nav-link">✨ Upscaler</a>
+            <a href="compressor.html" class="nav-link">🗜️ Compressor</a>
+            <a href="bg-remover.html" class="nav-link">🎨 BG Remover</a>
+            <a href="convert.html" class="nav-link active">🔄 PNG to JPG</a>
+            <a href="resize.html" class="nav-link">📏 Resize</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="tool-card-large">
+        <a href="../index.html" class="back-link">← Back</a>
+        <h1><i class="fas fa-exchange-alt"></i> PNG to JPG Converter</h1>
+        <p>Convert PNG images to JPG format with Sharp</p>
+        <div id="usageDisplay" style="margin: 16px 0;"></div>
+
+        <div class="dropzone" id="dropzone">
+            <i class="fas fa-cloud-upload-alt fa-2x"></i>
+            <p>Upload PNG image</p>
+            <input type="file" id="fileInput" accept="image/png" style="display:none">
+        </div>
+
+        <div id="previewArea" class="preview-area" style="display:none">
+            <div class="preview-box"><strong>Original PNG</strong><img id="originalImg" class="preview-img"></div>
+            <div class="preview-box"><strong>Converted JPG</strong><img id="resultImg" class="preview-img" style="display:none"><div id="loaderDiv"></div></div>
+        </div>
+
+        <div id="actionButtons" class="action-buttons" style="display:none">
+            <button class="btn btn-primary" id="processBtn">Convert to JPG</button>
+            <button class="btn btn-outline" id="resetBtn">Clear</button>
+            <button class="btn btn-outline" id="downloadBtn" disabled>Download JPG</button>
+        </div>
+    </div>
+    <footer>© 2026 AI ImageForge</footer>
+</div>
+<script src="../common.js"></script>
+<script>
+let originalFile = null;
+let resultBase64 = null;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const previewArea = document.getElementById('previewArea');
+const actionButtons = document.getElementById('actionButtons');
+const originalImg = document.getElementById('originalImg');
+const resultImg = document.getElementById('resultImg');
+const loaderDiv = document.getElementById('loaderDiv');
+const processBtn = document.getElementById('processBtn');
+const resetBtn = document.getElementById('resetBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+
+window.ForgeAuth.displayUsageInfo('usageDisplay', 'convert');
+
+async function handleFile(file) {
+    const user = window.ForgeAuth.currentUser();
+    if (!user) { window.ForgeAuth.openAuthModal('login'); return; }
+    if (!file.type.includes('png')) { alert('Please upload a PNG file'); return; }
+    try {
+        const usage = await window.ForgeAuth.getUsage();
+        if (!usage.tools.convert.isPro && usage.tools.convert.remaining <= 0) {
+            alert(`⚠️ Daily limit reached. Upgrade to Pro.`);
+            return;
+        }
+    } catch (e) { alert('Could not check usage.'); return; }
+    originalFile = file;
+    originalImg.src = URL.createObjectURL(file);
+    previewArea.style.display = 'flex';
+    actionButtons.style.display = 'flex';
+    resultImg.style.display = 'none';
+    resultBase64 = null;
+    downloadBtn.disabled = true;
+    loaderDiv.innerHTML = 'Ready to convert';
+}
+
+processBtn.addEventListener('click', async () => {
+    if (!originalFile) return;
+    const user = window.ForgeAuth.currentUser();
+    if (!user) { window.ForgeAuth.openAuthModal('login'); return; }
+
+    processBtn.disabled = true;
+    loaderDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Converting...';
+
+    try {
+        const response = await window.ForgeAuth.uploadToVPS('/sharp/convert', originalFile, { format: 'jpeg' });
+        const result = await window.ForgeAuth.pollResult(response.task_id);
+        resultBase64 = result.result;
+        resultImg.src = `data:image/jpeg;base64,${resultBase64}`;
+        resultImg.style.display = 'block';
+        loaderDiv.innerHTML = `✅ Converted in ${(result.processing_time || 0).toFixed(0)}ms`;
+        downloadBtn.disabled = false;
+        window.ForgeAuth.displayUsageInfo('usageDisplay', 'convert');
+    } catch (error) {
+        loaderDiv.innerHTML = `❌ Error: ${error.message}`;
+        alert(`Conversion failed: ${error.message}`);
+    } finally {
+        processBtn.disabled = false;
+    }
+});
+
+resetBtn.onclick = () => { previewArea.style.display = 'none'; actionButtons.style.display = 'none'; originalFile = null; fileInput.value = ''; };
+downloadBtn.onclick = () => { if(resultBase64) window.ForgeAuth.downloadBase64(resultBase64, 'converted.jpg', 'image/jpeg'); };
+dropzone.onclick = () => fileInput.click();
+dropzone.ondragover = e => { e.preventDefault(); dropzone.classList.add('active'); };
+dropzone.ondragleave = () => dropzone.classList.remove('active');
+dropzone.ondrop = e => { e.preventDefault(); dropzone.classList.remove('active'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+fileInput.onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); };
+</script>
+</body>
+</html>

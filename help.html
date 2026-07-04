@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - ImageForge AI</title>
+    <link rel="stylesheet" href="common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .nav-link {
+            font-size: 1.15rem !important;
+            font-weight: 600 !important;
+            padding: 0.7rem 1.4rem !important;
+        }
+        @media (max-width: 768px) {
+            .nav-link { font-size: 0.95rem !important; padding: 0.4rem 0.8rem !important; }
+        }
+        @media (max-width: 480px) {
+            .nav-link { font-size: 0.8rem !important; padding: 0.3rem 0.6rem !important; }
+        }
+
+        .help-hero {
+            background: linear-gradient(135deg, #fef3c7, #fde68a, #fcd34d) !important;
+        }
+        .help-hero h1, .help-hero p { color: #78350f !important; }
+        .help-card-full {
+            border-left: 4px solid #2563eb;
+            transition: all 0.3s;
+        }
+        .help-card-full:nth-child(2) { border-left-color: #8b5cf6; }
+        .help-card-full:nth-child(3) { border-left-color: #059669; }
+        .help-card-full:nth-child(4) { border-left-color: #d97706; }
+        .help-card-full:nth-child(5) { border-left-color: #dc2626; }
+        .help-card-full:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+        .help-card-icon {
+            background: linear-gradient(135deg, #2563eb15, #7c3aed15) !important;
+        }
+        .faq-section {
+            background: linear-gradient(135deg, #ffffff, #f8faff) !important;
+            border: 1px solid #e2e8f0;
+        }
+        .faq-question:hover {
+            color: #7c3aed !important;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="site-header">
+        <div class="logo">
+            <h1>ImageForge<span>AI</span></h1>
+            <span>Professional AI Image Toolkit</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="blog.html" class="nav-link">📝 Blog</a>
+            <a href="help.html" class="nav-link active">❓ Help</a>
+            <a href="contact.html" class="nav-link">📧 Contact</a>
+            <a href="pricing.html" class="nav-link">💰 Pricing</a>
+        </div>
+        <div class="auth-area" id="authWidget"></div>
+    </header>
+
+    <div class="help-hero">
+        <h1>❓ Help Center</h1>
+        <p>Learn how to use each tool effectively — step by step guides</p>
+    </div>
+
+    <div class="help-grid-full" id="helpGrid"></div>
+
+    <div class="faq-section">
+        <h2 class="section-title" style="justify-content:center; text-align:center;"><i class="fas fa-circle-question" style="color:#7c3aed;"></i> Frequently Asked Questions</h2>
+        <div class="faq-grid" id="faqGrid"></div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left"><i class="fas fa-microchip"></i> ImageForge AI — Professional upscaling & editing suite.</div>
+            <div class="footer-right">
+                <a href="pricing.html">Pricing</a>
+                <a href="contact.html">Contact</a>
+                <a href="help.html">Help</a>
+                <a href="blog.html">Blog</a>
+                <a href="#" onclick="window.ForgeAuth?.openAuthModal ? window.ForgeAuth.openAuthModal('login') : alert('Please refresh'); return false;">Sign In</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 ImageForge AI. All rights reserved.</div>
+    </footer>
+</div>
+
+<script src="common.js"></script>
+<script>
+    const helpItems = [
+        { id: 'help-upscaler', tool: 'AI Image Upscaler', icon: 'fa-magic', color: '#2563eb', steps: ['1. Click the upload area or drag & drop your image onto the page.', '2. Wait for the image to load and confirm it appears correctly.', '3. Click the "AI Upscale 2x" button to start processing.', '4. Processing typically takes 10-60 seconds depending on image size.', '5. Once complete, preview the result and click "Download" to save.', '💡 Pro tip: For best results, use images with clear details and good lighting.'] },
+        { id: 'help-rembg', tool: 'Background Remover', icon: 'fa-eraser', color: '#8b5cf6', steps: ['1. Upload your image by clicking the upload area or dragging a file.', '2. Click "Remove Background" to start AI processing.', '3. Wait for the AI to analyze and remove the background (10-30 seconds).', '4. Preview the result with transparent background.', '5. Click "Download PNG" to save your image with a transparent background.', '💡 Pro tip: Works best with images that have a clear subject and simple background.'] },
+        { id: 'help-compressor', tool: 'Image Compressor', icon: 'fa-compress', color: '#059669', steps: ['1. Upload your image (supports JPG, PNG, WebP).', '2. Click "Compress Image" to start processing.', '3. The tool will reduce file size while maintaining quality.', '4. Preview the compressed result with file size comparison.', '5. Click "Download" to save the compressed version.', '💡 Pro tip: Free users can compress up to 5MB files. Pro users get 50MB.'] },
+        { id: 'help-convert', tool: 'PNG to JPG Converter', icon: 'fa-exchange-alt', color: '#d97706', steps: ['1. Upload a PNG image (only PNG files are accepted).', '2. Click "Convert to JPG" to start conversion.', '3. The tool converts PNG to JPG with a white background.', '4. Preview the converted JPG image.', '5. Click "Download JPG" to save your converted image.', '💡 Pro tip: JPG files are smaller and better for web use.'] },
+        { id: 'help-resize', tool: 'Resize Image', icon: 'fa-arrows-alt', color: '#dc2626', steps: ['1. Upload your image first.', '2. Enter your desired Width and Height in pixels.', '3. Click "Apply Resize" to process your image.', '4. Preview the resized result.', '5. Click "Download" to save your resized image.', '💡 Pro tip: Free users are limited to 2048px. Pro users get up to 8192px.'] }
+    ];
+
+    const faqItems = [
+        { question: 'Is ImageForge AI really free?', answer: 'Yes! We offer a free tier with 3-5 operations per day per tool. For unlimited access and premium features, check out our Pro plan.' },
+        { question: 'How does the AI upscaling work?', answer: 'Our AI upscaling uses Real-ESRGAN technology, which analyzes your image and generates new pixel details to create a 2x larger version while preserving quality.' },
+        { question: 'What file formats are supported?', answer: 'We support JPG, PNG, and WebP formats for most tools. The PNG to JPG converter specifically requires PNG input.' },
+        { question: 'Are my images stored or shared?', answer: 'No. All processing happens in real-time. Images are not stored on our servers after processing. Your privacy is protected.' },
+        { question: 'How do I upgrade to Pro?', answer: 'Click the "Upgrade" button on the pricing page. You\'ll be redirected to our secure payment page.' }
+    ];
+
+    function renderHelp() {
+        const container = document.getElementById('helpGrid');
+        if (container) {
+            container.innerHTML = helpItems.map(item => `
+                <div class="help-card-full">
+                    <div class="help-card-icon" style="background:${item.color}20;color:${item.color};"><i class="fas ${item.icon}"></i></div>
+                    <h3 class="help-card-title">${item.tool}</h3>
+                    <div class="help-card-body">${item.steps.map(step => `<p class="help-step">${step}</p>`).join('')}</div>
+                    <a href="index.html#tools-section" class="help-tool-link" style="color:${item.color};"><i class="fas fa-arrow-right"></i> Open ${item.tool}</a>
+                </div>
+            `).join('');
+        }
+    }
+
+    function renderFAQ() {
+        const container = document.getElementById('faqGrid');
+        if (container) {
+            container.innerHTML = faqItems.map(item => `
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)"><span>${item.question}</span><i class="fas fa-chevron-down"></i></button>
+                    <div class="faq-answer">${item.answer}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function toggleFAQ(btn) {
+        const item = btn.closest('.faq-item');
+        const answer = item.querySelector('.faq-answer');
+        const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+        document.querySelectorAll('.faq-item').forEach(el => {
+            const a = el.querySelector('.faq-answer');
+            const b = el.querySelector('.faq-question i');
+            a.style.maxHeight = '0px';
+            a.style.opacity = '0';
+            b.className = 'fas fa-chevron-down';
+        });
+        if (!isOpen) {
+            answer.style.maxHeight = answer.scrollHeight + 'px';
+            answer.style.opacity = '1';
+            btn.querySelector('i').className = 'fas fa-chevron-up';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.ForgeAuth !== 'undefined' && window.ForgeAuth.renderAuthWidget) {
+            window.ForgeAuth.renderAuthWidget();
+        }
+        renderHelp();
+        renderFAQ();
+    });
+</script>
+</body>
+</html>
