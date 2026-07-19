@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog - CloakImg AI | AI Image Tips & Tutorials</title>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
-    <meta name="description" content="Latest articles about AI image upscaling, background removal, compression, and editing tips. Learn how to make the most of CloakImg AI tools.">
+    <meta name="description" content="Latest articles about AI image upscaling, background removal, compression, and editing tips from CloakImg AI.">
     <link rel="canonical" href="https://cloakimg.com/blog.html">
+    <link rel="stylesheet" href="common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-05YWCDS3ND');
+    </script>
+
+    <!-- 结构化数据 - Blog -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -24,9 +29,7 @@
         "url": "https://cloakimg.com/blog.html"
     }
     </script>
-    <link rel="stylesheet" href="common.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
         .nav-link {
             font-size: 1.15rem !important;
@@ -42,35 +45,154 @@
 
         .blog-hero {
             background: linear-gradient(135deg, #f0fdf4, #d1fae5, #a7f3d0) !important;
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+        .blog-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .blog-hero p {
+            font-size: 1.1rem;
+            color: #475569;
+        }
+
+        .blog-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.5rem 1.2rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            background: white;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .filter-btn:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            border-color: #7c3aed;
+        }
+
+        .blog-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.8rem;
+            margin: 1.5rem 0;
         }
         .blog-card-full {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            border: 1px solid #eef2f6;
             border-left: 4px solid #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
             transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-card-full:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
         }
         .blog-card-full:nth-child(2) { border-left-color: #8b5cf6; }
         .blog-card-full:nth-child(3) { border-left-color: #059669; }
         .blog-card-full:nth-child(4) { border-left-color: #d97706; }
         .blog-card-full:nth-child(5) { border-left-color: #dc2626; }
         .blog-card-full:nth-child(6) { border-left-color: #7c3aed; }
-        .blog-card-full:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-        }
+
         .blog-image-icon {
-            background: linear-gradient(135deg, #2563eb15, #7c3aed15) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #2563eb15, #7c3aed15);
+            border-radius: 14px;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            color: #2563eb;
         }
-        .filter-btn.active {
-            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-            border-color: #7c3aed !important;
+        .blog-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-            border: none !important;
+        .blog-category {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2563eb;
+            background: #eef2ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            align-self: flex-start;
+            margin-bottom: 0.6rem;
         }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
+        .blog-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            line-height: 1.4;
         }
-        /* 内链相关工具区域 */
+        .blog-title a {
+            color: #0f172a;
+            text-decoration: none;
+        }
+        .blog-title a:hover {
+            color: #2563eb;
+        }
+        .blog-excerpt {
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            flex: 1;
+            margin-bottom: 1rem;
+        }
+        .blog-meta {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 0.8rem;
+        }
+        .blog-meta i { margin-right: 4px; }
+        .blog-read-more {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            align-self: flex-start;
+        }
+        .blog-read-more:hover {
+            color: #1d4ed8;
+            transform: translateX(4px);
+        }
+
+        .blog-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1rem;
+            background: #f8fafc;
+            border-radius: 2rem;
+        }
+
         .related-tools {
             margin: 2rem 0;
             padding: 1.5rem;
@@ -105,6 +227,7 @@
             border-color: #2563eb;
             transform: translateY(-2px);
         }
+
         footer {
             background: linear-gradient(180deg, #f8fafc, #f1f5f9);
             border-top: 1px solid #e2e8f0;
@@ -132,7 +255,10 @@
             margin-top: 1rem;
             border-top: 1px solid #f1f5f9;
         }
+
         @media (max-width: 768px) {
+            .blog-hero h1 { font-size: 1.8rem; }
+            .blog-grid-full { grid-template-columns: 1fr; }
             .related-tools-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-content { flex-direction: column; text-align: center; }
             .footer-right { flex-wrap: wrap; justify-content: center; }
@@ -143,7 +269,7 @@
 <div class="app-container">
     <header class="site-header">
         <div class="logo">
-            <h1>CloakImg&nbsp;<span>AI</span></h1>
+            <h1>CloakImg <span>AI</span></h1>
             <span>Professional AI Image Toolkit</span>
         </div>
         <div class="nav-links">
@@ -162,6 +288,7 @@
         <p>Tips, tutorials & news about AI image processing — updated weekly</p>
     </div>
 
+    <!-- ===== FILTER BAR ===== -->
     <div class="blog-filter-bar">
         <button class="filter-btn active" data-filter="all">All</button>
         <button class="filter-btn" data-filter="Tutorial">Tutorials</button>
@@ -171,15 +298,18 @@
         <button class="filter-btn" data-filter="Trends">Trends</button>
     </div>
 
-    <div class="blog-grid-full" id="blogGrid"></div>
-
-    <div class="blog-pagination" id="blogPagination">
-        <button class="page-btn" id="prevPage" disabled>← Previous</button>
-        <span id="pageInfo">Page 1</span>
-        <button class="page-btn" id="nextPage">Next →</button>
+    <!-- ===== BLOG GRID ===== -->
+    <div class="blog-grid-full" id="blogGrid">
+        <!-- ===== 由 build_blog.py 自动生成 ===== -->
+        <!-- 这个区域会被 GitHub Actions 脚本自动替换 -->
+        <div class="blog-empty">
+            <i class="fas fa-spinner fa-pulse fa-3x" style="color:#94a3b8;"></i>
+            <p style="color:#64748b; margin-top:1rem;">Loading articles...</p>
+            <p style="color:#94a3b8; font-size:0.85rem;">If you see this, the blog is being set up.</p>
+        </div>
     </div>
 
-    <!-- ====== RELATED TOOLS - 内链 ====== -->
+    <!-- ===== RELATED TOOLS ===== -->
     <div class="related-tools">
         <h3><i class="fas fa-link" style="color:#2563eb;"></i> Try Our AI Tools</h3>
         <div class="related-tools-grid">
@@ -199,7 +329,7 @@
                 <a href="pricing.html">Pricing</a>
                 <a href="privacy-policy.html">Privacy</a>
                 <a href="terms-of-service.html">Terms</a>
-    <a href="cookie-policy.html">Cookies</a>
+                <a href="cookie-policy.html">Cookies</a>
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
                 <a href="blog.html">Blog</a>
@@ -211,118 +341,54 @@
 
 <script src="common.js"></script>
 <script>
-    const blogPosts = [
-        { id: 1, title: 'How to Upscale Images Without Losing Quality', excerpt: 'Learn the best techniques for AI-powered image upscaling. Real-ESRGAN technology can enlarge images up to 4x while preserving details.', category: 'Tutorial', date: '2026-06-28', readTime: '5 min read', image: 'fa-image', fullContent: 'Complete guide to AI upscaling with Real-ESRGAN...' },
-        { id: 2, title: 'Top 5 Reasons to Remove Backgrounds with AI', excerpt: 'AI background removal saves hours of manual editing. Discover how it can transform your product photos, portraits, and marketing materials.', category: 'Tips', date: '2026-06-25', readTime: '4 min read', image: 'fa-eraser', fullContent: 'AI background removal is revolutionizing image editing...' },
-        { id: 3, title: 'PNG vs JPG: Which Format Should You Use?', excerpt: 'Understanding the differences between PNG and JPG formats is crucial for web performance. Learn when to use each format for optimal results.', category: 'Guide', date: '2026-06-20', readTime: '6 min read', image: 'fa-exchange-alt', fullContent: 'Choosing the right image format for your needs...' },
-        { id: 4, title: 'Image Compression Techniques for Faster Websites', excerpt: 'Compressing images properly can reduce page load time by 40% or more. Here are the best practices for image optimization.', category: 'Performance', date: '2026-06-15', readTime: '7 min read', image: 'fa-compress', fullContent: 'Modern image compression techniques for web performance...' },
-        { id: 5, title: 'AI in Photography: The Future of Image Editing', excerpt: 'Artificial intelligence is revolutionizing photography. From auto-enhancement to content-aware fill, explore the latest AI editing tools.', category: 'Trends', date: '2026-06-10', readTime: '8 min read', image: 'fa-camera', fullContent: 'How AI is transforming the photography industry...' },
-        { id: 6, title: 'How to Resize Images for Social Media (2026 Guide)', excerpt: 'Different social media platforms require different image sizes. Our guide covers optimal dimensions for Instagram, Facebook, Twitter, and more.', category: 'Tutorial', date: '2026-06-05', readTime: '5 min read', image: 'fa-arrows-alt', fullContent: 'Complete social media image size guide for 2026...' },
-        { id: 7, title: 'Batch Processing: Save Hours of Image Editing Work', excerpt: 'Learn how to process multiple images at once using AI tools. Perfect for e-commerce product photos and bulk editing.', category: 'Tips', date: '2026-06-01', readTime: '6 min read', image: 'fa-layer-group', fullContent: 'Batch processing workflow for image editing...' },
-        { id: 8, title: 'The Rise of AI-Generated Images: What You Need to Know', excerpt: 'AI image generation is rapidly evolving. Explore the latest developments, ethical considerations, and how these tools complement traditional workflows.', category: 'Trends', date: '2026-05-25', readTime: '10 min read', image: 'fa-robot', fullContent: 'The state of AI image generation in 2026...' },
-        { id: 9, title: 'Optimize Images for SEO: A Complete Checklist', excerpt: 'Image SEO can significantly boost your search rankings. This checklist covers file naming, alt text, compression, and structured data.', category: 'Guide', date: '2026-05-20', readTime: '7 min read', image: 'fa-search', fullContent: 'Complete SEO checklist for website images...' }
-    ];
-
-    let currentPage = 1;
-    const postsPerPage = 6;
-    let currentFilter = 'all';
-    let filteredPosts = [...blogPosts];
-
-    function getFilteredPosts() {
-        if (currentFilter === 'all') return [...blogPosts];
-        return blogPosts.filter(p => p.category === currentFilter);
-    }
-
-    function renderBlog() {
-        const container = document.getElementById('blogGrid');
-        const filtered = getFilteredPosts();
-        filteredPosts = filtered;
-        const totalPages = Math.ceil(filtered.length / postsPerPage);
-        const start = (currentPage - 1) * postsPerPage;
-        const pagePosts = filtered.slice(start, start + postsPerPage);
-
-        if (container) {
-            if (pagePosts.length === 0) {
-                container.innerHTML = `<div class="blog-empty"><i class="fas fa-search fa-3x" style="color:#94a3b8;"></i><p style="color:#64748b;">No articles found.</p><button class="btn btn-outline" onclick="currentFilter='all';currentPage=1;renderBlog();updatePagination();">View All</button></div>`;
-                return;
-            }
-            container.innerHTML = pagePosts.map(post => `
-                <div class="blog-card-full" data-category="${post.category}">
-                    <div class="blog-image-icon"><i class="fas ${post.image}"></i></div>
-                    <div class="blog-content">
-                        <div class="blog-category">${post.category}</div>
-                        <h3 class="blog-title">${post.title}</h3>
-                        <p class="blog-excerpt">${post.excerpt}</p>
-                        <div class="blog-meta"><span><i class="far fa-calendar"></i> ${post.date}</span><span><i class="far fa-clock"></i> ${post.readTime}</span></div>
-                        <a href="#" class="blog-read-more" onclick="openBlogModal(${post.id}); return false;">Read Full Article →</a>
-                    </div>
-                </div>
-            `).join('');
-        }
-        updatePagination();
-    }
-
-    function updatePagination() {
-        const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages || 1}`;
-        document.getElementById('prevPage').disabled = currentPage <= 1;
-        document.getElementById('nextPage').disabled = currentPage >= totalPages;
-    }
-
-    function openBlogModal(postId) {
-        const post = blogPosts.find(p => p.id === postId);
-        if (!post) return;
-        const modal = document.createElement('div');
-        modal.className = 'blog-modal-overlay';
-        modal.innerHTML = `
-            <div class="blog-modal">
-                <button class="blog-modal-close" onclick="this.closest('.blog-modal-overlay').remove()">×</button>
-                <div class="blog-modal-category">${post.category}</div>
-                <h2 class="blog-modal-title">${post.title}</h2>
-                <div class="blog-modal-meta"><span><i class="far fa-calendar"></i> ${post.date}</span><span><i class="far fa-clock"></i> ${post.readTime}</span></div>
-                <div class="blog-modal-body">
-                    <p>${post.fullContent || post.excerpt}</p>
-                    <div style="margin-top:24px;padding:16px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;gap:12px;">
-                        <i class="fas fa-envelope" style="color:#2563eb;"></i>
-                        <span style="font-size:0.9rem;color:#475569;">Enjoyed this article? <a href="contact.html" style="color:#2563eb;font-weight:600;">Contact us</a> for more tips.</span>
-                    </div>
-                    <div style="margin-top:12px;padding:12px;background:#eef2ff;border-radius:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                        <span style="font-size:0.85rem;color:#1e40af;">🛠️ Try related tool:</span>
-                        <a href="tools/upscaler.html" style="color:#2563eb;font-weight:600;font-size:0.85rem;">AI Upscaler</a>
-                        <a href="tools/bg-remover.html" style="color:#2563eb;font-weight:600;font-size:0.85rem;">BG Remover</a>
-                        <a href="tools/compressor.html" style="color:#2563eb;font-weight:600;font-size:0.85rem;">Compressor</a>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.addEventListener('click', function(e) { if (e.target === this) this.remove(); });
-        document.addEventListener('keydown', function escHandler(e) { if (e.key === 'Escape') { modal.remove(); document.removeEventListener('keydown', escHandler); } });
-    }
-
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            currentFilter = this.dataset.filter;
-            currentPage = 1;
-            renderBlog();
-        });
-    });
-
-    document.getElementById('prevPage').addEventListener('click', function() {
-        if (currentPage > 1) { currentPage--; renderBlog(); document.getElementById('blogGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    });
-    document.getElementById('nextPage').addEventListener('click', function() {
-        const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-        if (currentPage < totalPages) { currentPage++; renderBlog(); document.getElementById('blogGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    });
-
     document.addEventListener('DOMContentLoaded', function() {
+        // 渲染认证组件
         if (typeof window.ForgeAuth !== 'undefined' && window.ForgeAuth.renderAuthWidget) {
             window.ForgeAuth.renderAuthWidget();
         }
-        renderBlog();
+
+        // ===== 分类筛选功能 =====
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const blogCards = document.querySelectorAll('.blog-card-full');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+
+                // 更新按钮状态
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 筛选文章
+                blogCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'flex';
+                    } else {
+                        const category = card.querySelector('.blog-category');
+                        if (category) {
+                            card.style.display = category.textContent === filter ? 'flex' : 'none';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+
+        // ===== 如果页面加载时没有任何文章，显示占位提示 =====
+        // 注意：脚本会替换 #blogGrid 的内容，所以这个检查在页面加载后执行
+        setTimeout(function() {
+            const grid = document.getElementById('blogGrid');
+            if (grid && grid.children.length === 0) {
+                grid.innerHTML = `
+                    <div class="blog-empty">
+                        <i class="fas fa-newspaper fa-3x" style="color:#94a3b8;"></i>
+                        <p style="color:#64748b; margin-top:1rem;">No articles published yet.</p>
+                        <p style="color:#94a3b8; font-size:0.85rem;">Check back soon for AI image editing tips!</p>
+                    </div>
+                `;
+            }
+        }, 2000);
     });
 </script>
 </body>
