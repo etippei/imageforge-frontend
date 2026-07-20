@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing - CloakImg AI</title>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
+    <meta name="description" content="CloakImg AI pricing: 24-hour access $1.99, Monthly $9.99, Yearly $79.99. Flexible plans for every need.">
+    <link rel="canonical" href="https://cloakimg.com/pricing.html">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-05YWCDS3ND');
+    </script>
+    
     <link rel="stylesheet" href="common.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -52,9 +55,9 @@
 
         .pricing-grid-page {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto 2rem;
         }
 
@@ -73,15 +76,15 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.08);
         }
         .pricing-card-page.popular {
-            border: 2px solid #2563eb;
-            background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+            border: 2px solid #7c3aed;
+            background: linear-gradient(180deg, #ffffff, #f5f3ff);
         }
         .pricing-card-page.popular::before {
             content: '★ MOST POPULAR';
             position: absolute;
             top: 14px;
             right: -28px;
-            background: #2563eb;
+            background: #7c3aed;
             color: white;
             font-size: 0.65rem;
             font-weight: 700;
@@ -89,6 +92,62 @@
             transform: rotate(45deg);
             letter-spacing: 0.05em;
         }
+        
+        /* 24小时套餐样式 */
+        .pricing-card-page.hourly-card {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
+            border: 2px solid #f59e0b !important;
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-card-page.hourly-card::before {
+            content: '⚡ QUICK ACCESS';
+            position: absolute;
+            top: 14px;
+            right: -28px;
+            background: #f59e0b;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 2.5rem;
+            transform: rotate(45deg);
+            letter-spacing: 0.05em;
+        }
+        .pricing-card-page.hourly-card .price {
+            color: #d97706 !important;
+        }
+        .pricing-card-page.hourly-card .btn-hourly {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            border: none !important;
+            color: white !important;
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .pricing-card-page.hourly-card .btn-hourly:hover {
+            background: linear-gradient(135deg, #d97706, #b45309) !important;
+            transform: translateY(-2px);
+        }
+        .hourly-badge-page {
+            background: #f59e0b;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
         .pricing-card-page .plan-icon {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
@@ -119,6 +178,12 @@
             display: inline-block;
             margin-top: -0.3rem;
         }
+        .price-old {
+            text-decoration: line-through;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-right: 4px;
+        }
         .pricing-card-page .features-list-page {
             list-style: none;
             margin: 1.5rem 0;
@@ -141,33 +206,13 @@
             color: #10b981;
             width: 20px;
         }
+        .pricing-card-page .features-list-page li .fa-bolt {
+            color: #f59e0b;
+            width: 20px;
+        }
         .pricing-card-page .features-list-page li .fa-times {
             color: #cbd5e1;
             width: 20px;
-        }
-        .pricing-card-page .btn {
-            width: 100%;
-            justify-content: center;
-            padding: 0.8rem;
-            font-size: 1rem;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-            border: none !important;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1d4ed8, #6d28d9) !important;
-            transform: translateY(-2px);
-        }
-        .btn-yearly {
-            background: linear-gradient(135deg, #10b981, #059669) !important;
-            border: none !important;
-            color: white;
-        }
-        .btn-yearly:hover {
-            background: linear-gradient(135deg, #059669, #047857) !important;
-            transform: translateY(-2px);
         }
         .pricing-card-page .compare-text {
             font-size: 0.75rem;
@@ -211,6 +256,9 @@
         .compare-table .fa-check {
             color: #10b981;
         }
+        .compare-table .fa-bolt {
+            color: #f59e0b;
+        }
         .compare-table .fa-times {
             color: #cbd5e1;
         }
@@ -230,7 +278,7 @@
 <div class="app-container">
     <header class="site-header">
         <div class="logo">
-            <h1>CloakImg&nbsp;<span>AI</span></h1>
+            <h1>CloakImg <span>AI</span></h1>
             <span>Professional AI Image Toolkit</span>
         </div>
         <div class="nav-links">
@@ -246,10 +294,35 @@
 
     <div class="pricing-hero">
         <h1>💰 Choose Your Plan</h1>
-        <p>Free tier available • Upgrade for unlimited access and premium features</p>
+        <p>Free tier available • Upgrade for unlimited access • <strong style="color:#d97706;">Try 24h access for $1.99</strong></p>
     </div>
 
-    <div class="pricing-grid-page" id="pricingGridPage">
+    <div class="pricing-grid-page">
+        <!-- 24小时套餐 - 第一位，突出显示 -->
+        <div class="pricing-card-page hourly-card">
+            <div class="plan-icon">⚡</div>
+            <div class="hourly-badge-page">🔥 QUICK ACCESS</div>
+            <h3>24-Hour Pass</h3>
+            <div class="price">
+                <span class="price-old">$4.99</span>
+                $1.99
+                <small>/24h</small>
+            </div>
+            <p style="font-size:0.8rem; color:#92400e; margin-top:-0.5rem;">💡 Just $0.40 per operation!</p>
+            <ul class="features-list-page">
+                <li><i class="fas fa-bolt" style="color:#f59e0b;"></i> <strong>+5 extra operations</strong></li>
+                <li><i class="fas fa-check"></i> Full access to all tools</li>
+                <li><i class="fas fa-check"></i> Valid for 24 hours</li>
+                <li><i class="fas fa-check"></i> No subscription needed</li>
+                <li><i class="fas fa-check"></i> <span style="color:#d97706;">Perfect for one-time urgent tasks</span></li>
+            </ul>
+            <a href="https://etiplpl.gumroad.com/l/idjfmj" target="_blank" class="btn-hourly">
+                <i class="fas fa-bolt"></i> Get 5 Credits — $1.99
+            </a>
+            <p style="font-size:0.7rem; color:#92400e; margin-top:0.5rem;">⏳ 24-hour access · 5 operations included</p>
+        </div>
+
+        <!-- 月付套餐 -->
         <div class="pricing-card-page">
             <div class="plan-icon">📆</div>
             <h3>Monthly</h3>
@@ -265,20 +338,21 @@
             <a href="https://etiplpl.gumroad.com/l/czswbj" target="_blank" class="btn btn-primary">Choose Monthly</a>
         </div>
 
+        <!-- 年付套餐 -->
         <div class="pricing-card-page popular">
             <div class="plan-icon">🌟</div>
             <h3>Yearly <span style="font-size:0.8rem; background:#10b981; color:white; padding:0.1rem 0.8rem; border-radius:20px; margin-left:8px;">Save 33%</span></h3>
             <div class="price">$79.99 <small>/year</small></div>
-            <div class="savings-badge">💰 Equivalent to just $6.67/month</div>
+            <div class="savings-badge">💰 Only $6.67/month</div>
             <ul class="features-list-page">
-                <li><i class="fas fa-check"></i> <strong>Everything in Monthly, plus:</strong></li>
-                <li><i class="fas fa-check"></i> <strong>2 months FREE</strong> compared to monthly</li>
-                <li><i class="fas fa-check"></i> Best value for long-term users</li>
-                <li><i class="fas fa-check"></i> Priority email support</li>
+                <li><i class="fas fa-check"></i> <strong>Everything in Monthly</strong></li>
+                <li><i class="fas fa-check"></i> <strong>2 months FREE</strong></li>
+                <li><i class="fas fa-check"></i> Best value for long-term</li>
+                <li><i class="fas fa-check"></i> Priority support</li>
                 <li><i class="fas fa-check"></i> Early access to new features</li>
                 <li><i class="fas fa-check"></i> 30-day money-back guarantee</li>
             </ul>
-            <a href="https://etiplpl.gumroad.com/l/ovtnj" target="_blank" class="btn btn-yearly">Choose Yearly & Save 33%</a>
+            <a href="https://etiplpl.gumroad.com/l/ovtnj" target="_blank" class="btn btn-primary">Choose Yearly & Save 33%</a>
             <div class="compare-text">vs. $119.88 paid monthly</div>
         </div>
     </div>
@@ -290,58 +364,60 @@
                 <tr>
                     <th>Feature</th>
                     <th>Free</th>
+                    <th>24-Hour</th>
                     <th>Monthly</th>
                     <th>Yearly</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Daily Operations</td>
-                    <td>3-5 per tool</td>
+                    <td>Price</td>
+                    <td>$0</td>
+                    <td><strong style="color:#d97706;">$1.99</strong></td>
+                    <td>$9.99/mo</td>
+                    <td>$79.99/yr</td>
+                </tr>
+                <tr>
+                    <td>Operations</td>
+                    <td>3-5/day</td>
+                    <td><strong style="color:#d97706;">+5 extra</strong></td>
                     <td><strong>Unlimited</strong></td>
                     <td><strong>Unlimited</strong></td>
                 </tr>
                 <tr>
-                    <td>AI Upscale Max Resolution</td>
+                    <td>Duration</td>
+                    <td>Ongoing</td>
+                    <td><strong style="color:#d97706;">24 hours</strong></td>
+                    <td>Monthly</td>
+                    <td>Yearly</td>
+                </tr>
+                <tr>
+                    <td>Upscale Max</td>
                     <td>4MP</td>
                     <td><strong>64MP</strong></td>
                     <td><strong>64MP</strong></td>
+                    <td><strong>64MP</strong></td>
                 </tr>
                 <tr>
-                    <td>Compression Max File Size</td>
+                    <td>Compression</td>
                     <td>5MB</td>
                     <td><strong>50MB</strong></td>
                     <td><strong>50MB</strong></td>
+                    <td><strong>50MB</strong></td>
                 </tr>
                 <tr>
-                    <td>Background Removal Quality</td>
+                    <td>BG Removal</td>
                     <td>Standard</td>
                     <td><strong>Premium HD</strong></td>
                     <td><strong>Premium HD</strong></td>
+                    <td><strong>Premium HD</strong></td>
                 </tr>
                 <tr>
-                    <td>Resize Max Resolution</td>
-                    <td>2048px</td>
-                    <td><strong>8192px</strong></td>
-                    <td><strong>8192px</strong></td>
-                </tr>
-                <tr>
-                    <td>Batch Processing</td>
-                    <td><i class="fas fa-times"></i></td>
-                    <td><i class="fas fa-check"></i></td>
-                    <td><i class="fas fa-check"></i></td>
-                </tr>
-                <tr>
-                    <td>Priority Support</td>
-                    <td><i class="fas fa-times"></i></td>
-                    <td><i class="fas fa-check"></i></td>
-                    <td><i class="fas fa-check"></i></td>
-                </tr>
-                <tr>
-                    <td>Best Value</td>
-                    <td><i class="fas fa-times"></i></td>
-                    <td><i class="fas fa-times"></i></td>
-                    <td><i class="fas fa-check" style="color:#f59e0b;"></i> <strong>Save 33%</strong></td>
+                    <td>Best For</td>
+                    <td>Casual</td>
+                    <td style="color:#d97706; font-weight:600;"><i class="fas fa-bolt"></i> Urgent Tasks</td>
+                    <td>Regular</td>
+                    <td>Savings</td>
                 </tr>
             </tbody>
         </table>
@@ -354,7 +430,7 @@
                 <a href="pricing.html">Pricing</a>
                 <a href="privacy-policy.html">Privacy</a>
                 <a href="terms-of-service.html">Terms</a>
-    <a href="cookie-policy.html">Cookies</a>
+                <a href="cookie-policy.html">Cookies</a>
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
                 <a href="blog.html">Blog</a>

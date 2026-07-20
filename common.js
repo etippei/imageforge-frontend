@@ -2,7 +2,10 @@
 // 前端公共JS - 包含认证、API调用、使用统计
 // ============================================
 
-const API_BASE = 'https://CloakImg-api.etiplpl.workers.dev/api';
+// ============================================
+// API配置 - 指向 Cloudflare Worker
+// ============================================
+const API_BASE = 'https://cloakimg-api.etiplpl.workers.dev/api';
 
 // ---------- 用户认证 ----------
 async function apiRequest(endpoint, options = {}) {
@@ -184,20 +187,36 @@ function displayUsageInfo(containerId, toolType) {
         const remaining = tool.remaining;
         const percent = limit > 0 ? (used / limit) * 100 : 0;
         
+        // 检查是否有额外额度（24小时套餐购买后，会有 extra_credits）
+        const extraCredits = usage.extra_credits || 0;
+        const totalRemaining = remaining + extraCredits;
+        
         let color = '#2563eb';
         if (percent > 80) color = '#ef4444';
         else if (percent > 50) color = '#f59e0b';
+        
+        let bottomText = '';
+        if (isPro) {
+            bottomText = '♾️ Unlimited';
+        } else if (extraCredits > 0) {
+            bottomText = `⚡ ${totalRemaining} remaining (${extraCredits} extra credits)`;
+        } else if (remaining <= 0) {
+            bottomText = `<a href="pricing.html#hourly" style="color: #f59e0b; font-weight: 600;">⬇️ Get 5 extra for $1.99</a>`;
+        } else {
+            bottomText = `${remaining} remaining today`;
+        }
         
         container.innerHTML = `
             <div style="background: #f1f5f9; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span>
-                        ${isPro ? '⭐ Pro' : '📊 Free'}
+                        ${isPro ? '⭐ Pro' : extraCredits > 0 ? '⚡ Extra Credits' : '📊 Free'}
                         <strong>${getToolDisplayName(toolType)}</strong>
                     </span>
                     <span>
                         ${isPro ? '♾️ Unlimited' : `${used} / ${limit} used`}
-                        ${!isPro && remaining <= 2 ? ' ⚠️' : ''}
+                        ${extraCredits > 0 ? ' + ⚡' + extraCredits : ''}
+                        ${!isPro && remaining <= 2 && extraCredits === 0 ? ' ⚠️' : ''}
                     </span>
                 </div>
                 ${!isPro ? `
@@ -205,8 +224,8 @@ function displayUsageInfo(containerId, toolType) {
                         <div style="width: ${Math.min(100, percent)}%; height: 100%; background: ${color}; border-radius: 4px; transition: width 0.3s;"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.75rem; color: #64748b;">
-                        <span>${remaining} remaining today</span>
-                        ${remaining === 0 ? '<a href="pricing.html" style="color: #2563eb; font-weight: 600;">Upgrade to Pro →</a>' : ''}
+                        <span>${bottomText}</span>
+                        ${!isPro && remaining === 0 && extraCredits === 0 ? '<a href="pricing.html" style="color: #f59e0b; font-weight: 600;">Try 24h for $1.99 →</a>' : ''}
                     </div>
                 ` : ''}
             </div>

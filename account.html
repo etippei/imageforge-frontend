@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account - CloakImg AI</title>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
+    <meta name="description" content="Manage your CloakImg AI account, subscription, and usage credits.">
+    <link rel="canonical" href="https://cloakimg.com/account.html">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-05YWCDS3ND');
+    </script>
+    
     <link rel="stylesheet" href="common.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -48,6 +51,65 @@
         }
         .account-hero p {
             color: #475569;
+        }
+
+        /* 24小时套餐快速购买 */
+        .hourly-quick {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 2px solid #f59e0b;
+            border-radius: 1.5rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .hourly-quick .label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .hourly-quick .label i {
+            font-size: 2rem;
+            color: #f59e0b;
+        }
+        .hourly-quick .label .title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #78350f;
+        }
+        .hourly-quick .label .desc {
+            font-size: 0.85rem;
+            color: #92400e;
+        }
+        .hourly-quick .price-tag {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #d97706;
+        }
+        .hourly-quick .price-tag small {
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+        .btn-hourly-quick {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-hourly-quick:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
         }
 
         .account-grid {
@@ -110,6 +172,15 @@
             font-weight: 600;
             display: inline-block;
         }
+        .account-card .badge-credits {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
 
         .account-card-full {
             grid-column: 1 / -1;
@@ -166,11 +237,6 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
-        .form-group-account .helper {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 4px;
-        }
 
         .message-success {
             background: #ecfdf5;
@@ -200,6 +266,14 @@
                 grid-template-columns: 1fr;
             }
             .account-hero h1 { font-size: 1.6rem; }
+            .hourly-quick {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.2rem;
+            }
+            .hourly-quick .price-tag {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -207,7 +281,7 @@
 <div class="app-container">
     <header class="site-header">
         <div class="logo">
-            <h1>CloakImg&nbsp;<span>AI</span></h1>
+            <h1>CloakImg <span>AI</span></h1>
             <span>Professional AI Image Toolkit</span>
         </div>
         <div class="nav-links">
@@ -224,7 +298,7 @@
     <div class="account-container">
         <div class="account-hero">
             <h1>👤 My Account</h1>
-            <p>View your subscription status, account info, and manage your settings</p>
+            <p>View your subscription status, credits, and manage your settings</p>
         </div>
 
         <div id="accountContent">
@@ -241,7 +315,7 @@
                 <a href="pricing.html">Pricing</a>
                 <a href="privacy-policy.html">Privacy</a>
                 <a href="terms-of-service.html">Terms</a>
-    <a href="cookie-policy.html">Cookies</a>
+                <a href="cookie-policy.html">Cookies</a>
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
                 <a href="blog.html">Blog</a>
@@ -307,6 +381,7 @@
         const expiresAt = user.subscription_expires || 0;
         const now = Math.floor(Date.now() / 1000);
         const isExpired = isPro && expiresAt > 0 && expiresAt < now;
+        const extraCredits = user.extra_credits || 0;
 
         let expiryDisplay = 'Never expires';
         let expiryClass = 'badge-free';
@@ -324,7 +399,25 @@
         }
 
         container.innerHTML = `
+            <!-- 24小时套餐快速购买入口 -->
+            <div class="hourly-quick">
+                <div class="label">
+                    <i class="fas fa-bolt"></i>
+                    <div>
+                        <div class="title">⚡ Need extra operations right now?</div>
+                        <div class="desc">Get 5 additional operations for 24 hours — no subscription required</div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+                    <span class="price-tag">$1.99 <small>/24h</small></span>
+                    <a href="https://etiplpl.gumroad.com/l/idjfmj" target="_blank" class="btn-hourly-quick">
+                        <i class="fas fa-bolt"></i> Get 5 Credits
+                    </a>
+                </div>
+            </div>
+
             <div class="account-grid">
+                <!-- 订阅状态 -->
                 <div class="account-card account-card-full">
                     <h3><i class="fas fa-crown"></i> Subscription</h3>
                     <div>
@@ -342,12 +435,32 @@
                                     ? 'Your subscription has expired. <a href="pricing.html" style="color:#2563eb;">Renew now</a>'
                                     : `${daysRemaining !== null ? `${daysRemaining} days remaining` : 'Active'} · Expires: ${expiryDisplay}`
                             ) : (
-                                'Upgrade to Pro for unlimited access and premium features. <a href="pricing.html" style="color:#2563eb;">Upgrade now</a>'
+                                'Upgrade to Pro for unlimited access. Or <a href="#hourly" style="color:#f59e0b; font-weight:600;">try 24h for $1.99</a>'
                             )}
                         </div>
                     </div>
                 </div>
 
+                <!-- 使用次数 / 额外额度 -->
+                <div class="account-card">
+                    <h3><i class="fas fa-chart-bar"></i> Usage Credits</h3>
+                    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+                        <div>
+                            <div class="value" style="font-size:1.5rem;">
+                                ${extraCredits > 0 ? `⚡ ${extraCredits}` : '0'}
+                            </div>
+                            <div class="sub-value">Extra credits available</div>
+                        </div>
+                        <div>
+                            <span class="${extraCredits > 0 ? 'badge-credits' : 'badge-free'}">
+                                ${extraCredits > 0 ? `${extraCredits} operations ready` : 'No extra credits'}
+                            </span>
+                            ${extraCredits === 0 ? `<a href="https://etiplpl.gumroad.com/l/idjfmj" target="_blank" style="display:inline-block; margin-top:0.5rem; color:#f59e0b; font-weight:600; font-size:0.85rem;">Buy 5 for $1.99 →</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 账户信息 -->
                 <div class="account-card">
                     <h3><i class="fas fa-user"></i> Account Info</h3>
                     <div class="value" style="font-size:1.1rem;">${user.email}</div>
@@ -359,6 +472,7 @@
                     </div>
                 </div>
 
+                <!-- 修改密码 -->
                 <div class="account-card">
                     <h3><i class="fas fa-key"></i> Change Password</h3>
                     <form id="changePasswordForm">
@@ -378,12 +492,16 @@
                     </form>
                 </div>
 
+                <!-- 账户操作 -->
                 <div class="account-card">
                     <h3><i class="fas fa-cog"></i> Account Actions</h3>
                     <div style="display:flex; flex-direction:column; gap:0.6rem;">
                         ${!isPro ? `
                             <a href="pricing.html" class="btn-account primary" style="text-align:center; text-decoration:none;">
                                 <i class="fas fa-gem"></i> Upgrade to Pro
+                            </a>
+                            <a href="https://etiplpl.gumroad.com/l/idjfmj" target="_blank" class="btn-account" style="text-align:center; text-decoration:none; border-color:#f59e0b; color:#d97706;">
+                                <i class="fas fa-bolt"></i> Get 5 Extra Credits — $1.99
                             </a>
                         ` : `
                             <a href="pricing.html" class="btn-account" style="text-align:center; text-decoration:none;">
