@@ -3,27 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Background Remover - CloakImg AI | AI Background Remover — Studio Quality</title>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
-    <meta name="description" content="Professional AI image background remover. Remove image backgrounds automatically with Rembg U²-Net. 100% local processing. No uploads, complete privacy.">
+    <title>Professional Background Remover - CloakImg AI</title>
+    <meta name="description" content="Professional AI background remover. Remove image backgrounds automatically with Rembg U²-Net. 100% local processing.">
     <link rel="canonical" href="https://cloakimg.com/tools/bg-remover.html">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-05YWCDS3ND');
+    </script>
+    
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -31,11 +23,12 @@
         "name": "Background Remover - CloakImg AI",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "All",
-        "description": "Professional AI image background remover. Remove image backgrounds automatically with Rembg U²-Net. 100% local processing.",
+        "description": "Professional AI background remover. Remove image backgrounds automatically with Rembg U²-Net. 100% local processing.",
         "url": "https://cloakimg.com/tools/bg-remover.html",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
     </script>
+    
     <link rel="stylesheet" href="../common.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -73,6 +66,24 @@
             color: #2563eb !important;
         }
         .btn-outline:hover { background: #2563eb !important; color: white !important; }
+        .btn-hourly-tool {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            border: none !important;
+            color: white !important;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-hourly-tool:hover {
+            background: linear-gradient(135deg, #d97706, #b45309) !important;
+            transform: translateY(-2px);
+        }
         .dropzone {
             border: 2px dashed #cbd5e1;
             border-radius: 1.5rem;
@@ -113,6 +124,36 @@
             margin-top: 1rem;
             flex-wrap: wrap;
         }
+        .hourly-banner {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .hourly-banner .label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .hourly-banner .label i {
+            font-size: 1.4rem;
+            color: #f59e0b;
+        }
+        .hourly-banner .label .title {
+            font-weight: 700;
+            color: #78350f;
+            font-size: 0.95rem;
+        }
+        .hourly-banner .label .desc {
+            color: #92400e;
+            font-size: 0.8rem;
+        }
         footer {
             background: linear-gradient(180deg, #f8fafc, #f1f5f9);
             border-top: 1px solid #e2e8f0;
@@ -145,6 +186,7 @@
             .preview-area { flex-direction: column; }
             .footer-content { flex-direction: column; text-align: center; }
             .footer-right { flex-wrap: wrap; justify-content: center; }
+            .hourly-banner { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -152,7 +194,7 @@
 <div class="app-container">
     <header class="site-header">
         <div class="logo">
-            <h1>CloakImg&nbsp;<span>AI</span></h1>
+            <h1>CloakImg <span>AI</span></h1>
             <span>Professional AI Image Toolkit</span>
         </div>
         <div class="nav-links">
@@ -167,12 +209,27 @@
     </header>
 
     <div class="tool-hero">
-        <h1>🎨 AI Background Remover</h1>
+        <h1>🎨 Professional AI Background Remover</h1>
         <p>Remove image backgrounds automatically with Rembg U²-Net — <strong>100% local processing</strong></p>
     </div>
 
     <div class="tool-card-large">
         <a href="../tools.html" class="back-link">← Back to Tools</a>
+
+        <!-- 24小时套餐入口 -->
+        <div class="hourly-banner">
+            <div class="label">
+                <i class="fas fa-bolt"></i>
+                <div>
+                    <div class="title">⚡ Need more credits?</div>
+                    <div class="desc">Get 5 extra operations for 24h — only $1.99</div>
+                </div>
+            </div>
+            <a href="https://etiplpl.gumroad.com/l/idjfmj" target="_blank" class="btn-hourly-tool">
+                <i class="fas fa-bolt"></i> Buy Now
+            </a>
+        </div>
+
         <div id="usageDisplay" style="margin: 16px 0;"></div>
 
         <div class="dropzone" id="dropzone">
@@ -203,20 +260,7 @@
             <button class="btn btn-outline" id="downloadBtn" style="background:#eef2ff;" disabled><i class="fas fa-download"></i> Download PNG</button>
         </div>
     </div>
-	<!-- ====== RELATED TOOLS - 内链 ====== -->
-	<div class="related-tools" style="margin: 2rem 0; padding: 1.5rem; background: #f8fafc; border-radius: 1.5rem; border: 1px solid #e2e8f0;">
-		<h3 style="text-align:center; margin-bottom:1.2rem; font-size:1.1rem;">
-			<i class="fas fa-link" style="color:#2563eb;"></i> Related Tools
-		</h3>
-		<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:0.8rem; text-align:center;">
-			<a href="../tools/id-photo.html" style="color:#2563eb; text-decoration:none; font-size:0.9rem; padding:0.5rem; border-radius:8px; background:white; border:1px solid #e2e8f0;">🪪 ID Photo Maker</a>
-			<a href="../tools/upscaler.html" style="color:#2563eb; text-decoration:none; font-size:0.9rem; padding:0.5rem; border-radius:8px; background:white; border:1px solid #e2e8f0;">✨ AI Upscaler</a>
-			<a href="../tools/bg-remover.html" style="color:#2563eb; text-decoration:none; font-size:0.9rem; padding:0.5rem; border-radius:8px; background:white; border:1px solid #e2e8f0;">🎨 BG Remover</a>
-			<a href="../tools/compressor.html" style="color:#2563eb; text-decoration:none; font-size:0.9rem; padding:0.5rem; border-radius:8px; background:white; border:1px solid #e2e8f0;">🗜️ Compressor</a>
-			<a href="../tools/convert.html" style="color:#2563eb; text-decoration:none; font-size:0.9rem; padding:0.5rem; border-radius:8px; background:white; border:1px solid #e2e8f0;">🔄 PNG to JPG</a>
-			<a href="../tools/resize.html" style="color:#2563eb; text-decoration:none; font-size:0.9rem; padding:0.5rem; border-radius:8px; background:white; border:1px solid #e2e8f0;">📏 Resize</a>
-		</div>
-	</div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-left"><i class="fas fa-microchip"></i> CloakImg AI — 100% Local Processing</div>
@@ -224,7 +268,7 @@
                 <a href="../pricing.html">Pricing</a>
                 <a href="../privacy-policy.html">Privacy</a>
                 <a href="../terms-of-service.html">Terms</a>
-            <a href="../cookie-policy.html">Cookies</a>
+                <a href="../cookie-policy.html">Cookies</a>
                 <a href="../about.html">About</a>
                 <a href="../contact.html">Contact</a>
                 <a href="../blog.html">Blog</a>
@@ -259,7 +303,7 @@ async function handleFile(file) {
     try {
         const usage = await window.ForgeAuth.getUsage();
         if (!usage.tools.rembg.isPro && usage.tools.rembg.remaining <= 0) {
-            alert(`⚠️ Daily limit reached. Upgrade to Pro.`);
+            alert(`⚠️ Daily limit reached. Upgrade to Pro or try 24h pass for $1.99.`);
             return;
         }
     } catch (e) { alert('Could not check usage.'); return; }

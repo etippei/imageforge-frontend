@@ -3,27 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ID Photo Maker - CloakImg AI | ID Photo Maker — Passport & Visa Ready</title>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-05YWCDS3ND');
-</script>
-    <meta name="description" content="Professional AI image ID photo maker. Replace background & resize for passport, visa, and ID cards. 100% local processing. No uploads, complete privacy.">
+    <title>Professional ID Photo Maker - CloakImg AI</title>
+    <meta name="description" content="Professional ID photo maker. Replace background & resize for passport, visa, and ID cards. 100% local processing. No uploads, complete privacy.">
     <link rel="canonical" href="https://cloakimg.com/tools/id-photo.html">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-05YWCDS3ND"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-05YWCDS3ND');
+    </script>
+
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -31,11 +23,12 @@
         "name": "ID Photo Maker - CloakImg AI",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "All",
-        "description": "Professional AI image ID photo maker. Replace background & resize for passport, visa, and ID cards. 100% local processing.",
+        "description": "Professional ID photo maker. Replace background & resize for passport, visa, and ID cards. 100% local processing.",
         "url": "https://cloakimg.com/tools/id-photo.html",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
     </script>
+
     <link rel="stylesheet" href="../common.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -73,6 +66,24 @@
             color: #2563eb !important;
         }
         .btn-outline:hover { background: #2563eb !important; color: white !important; }
+        .btn-hourly-tool {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            border: none !important;
+            color: white !important;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-hourly-tool:hover {
+            background: linear-gradient(135deg, #d97706, #b45309) !important;
+            transform: translateY(-2px);
+        }
         .dropzone {
             border: 2px dashed #cbd5e1;
             border-radius: 1.5rem;
@@ -130,7 +141,37 @@
         }
         .color-btn:hover { transform: scale(1.05); }
         .color-btn.active { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.3); }
-        /* ===== 内链样式 ===== */
+        .hourly-banner {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .hourly-banner .label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .hourly-banner .label i {
+            font-size: 1.4rem;
+            color: #f59e0b;
+        }
+        .hourly-banner .label .title {
+            font-weight: 700;
+            color: #78350f;
+            font-size: 0.95rem;
+        }
+        .hourly-banner .label .desc {
+            color: #92400e;
+            font-size: 0.8rem;
+        }
+
         .related-tools {
             margin: 2rem 0;
             padding: 1.5rem;
@@ -204,6 +245,7 @@
             .footer-content { flex-direction: column; text-align: center; }
             .footer-right { flex-wrap: wrap; justify-content: center; }
             .related-tools-grid { grid-template-columns: repeat(2, 1fr); }
+            .hourly-banner { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -211,7 +253,7 @@
 <div class="app-container">
     <header class="site-header">
         <div class="logo">
-            <h1>CloakImg&nbsp;<span>AI</span></h1>
+            <h1>CloakImg <span>AI</span></h1>
             <span>Professional AI Image Toolkit</span>
         </div>
         <div class="nav-links">
@@ -226,12 +268,26 @@
     </header>
 
     <div class="tool-hero">
-        <h1>📷 ID Photo Maker</h1>
+        <h1>📷 Professional ID Photo Maker</h1>
         <p>Replace background & resize for passport, visa, and ID cards — <strong>100% local processing</strong></p>
     </div>
 
     <div class="tool-card-large">
         <a href="../tools.html" class="back-link">← Back to Tools</a>
+
+        <!-- 24小时套餐入口 -->
+        <div class="hourly-banner">
+            <div class="label">
+                <i class="fas fa-bolt"></i>
+                <div>
+                    <div class="title">⚡ Need more credits?</div>
+                    <div class="desc">Get 5 extra operations for 24h — only $1.99</div>
+                </div>
+            </div>
+            <a href="https://etiplpl.gumroad.com/l/idjfmj" target="_blank" class="btn-hourly-tool">
+                <i class="fas fa-bolt"></i> Buy Now
+            </a>
+        </div>
 
         <div id="usageDisplay" style="margin: 16px 0;"></div>
 
@@ -284,13 +340,13 @@
 
     <!-- ====== RELATED TOOLS - 内链 ====== -->
     <div class="related-tools">
-        <h3><i class="fas fa-link" style="color:#2563eb;"></i> Related Tools</h3>
+        <h3><i class="fas fa-link" style="color:#2563eb;"></i> Try Our AI Tools</h3>
         <div class="related-tools-grid">
-            <a href="../tools/upscaler.html">✨ AI Upscaler</a>
-            <a href="../tools/bg-remover.html">🎨 BG Remover</a>
-            <a href="../tools/compressor.html">🗜️ Compressor</a>
-            <a href="../tools/convert.html">🔄 PNG to JPG</a>
-            <a href="../tools/resize.html">📏 Resize</a>
+            <a href="upscaler.html">✨ AI Upscaler</a>
+            <a href="bg-remover.html">🎨 BG Remover</a>
+            <a href="compressor.html">🗜️ Compressor</a>
+            <a href="convert.html">🔄 PNG to JPG</a>
+            <a href="resize.html">📏 Resize</a>
             <a href="../pricing.html">💰 Upgrade to Pro</a>
         </div>
     </div>
@@ -302,7 +358,7 @@
                 <a href="../pricing.html">Pricing</a>
                 <a href="../privacy-policy.html">Privacy</a>
                 <a href="../terms-of-service.html">Terms</a>
-            <a href="../cookie-policy.html">Cookies</a>
+                <a href="../cookie-policy.html">Cookies</a>
                 <a href="../about.html">About</a>
                 <a href="../contact.html">Contact</a>
                 <a href="../blog.html">Blog</a>
@@ -314,7 +370,6 @@
 
 <script src="../common.js"></script>
 <script>
-// 原有 JS 代码保持不变...
 let originalFile = null;
 let resultBase64 = null;
 let selectedColor = '#e11d48';
@@ -357,8 +412,8 @@ async function handleFile(file) {
     if (!user) { window.ForgeAuth.openAuthModal('login'); return; }
     try {
         const usage = await window.ForgeAuth.getUsage();
-        if (!usage.tools.idphoto.isPro && usage.tools.idphoto.remaining <= 0) {
-            alert(`⚠️ Daily limit reached. Upgrade to Pro.`);
+        if (!usage.tools.idphoto.isPro && usage.tools.idphoto.remaining <= 0 && usage.extra_credits === 0) {
+            alert(`⚠️ Daily limit reached. Get extra credits for $1.99 or upgrade to Pro.`);
             return;
         }
     } catch (e) { alert('Could not check usage.'); return; }
