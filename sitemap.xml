@@ -3,7 +3,7 @@
     <!-- 首页 -->
     <url>
         <loc>https://cloakimg.com/</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
@@ -11,43 +11,43 @@
     <!-- 核心页面 -->
     <url>
         <loc>https://cloakimg.com/tools.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/pricing.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/blog.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/help.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/about.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/contact.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/account.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
@@ -55,19 +55,19 @@
     <!-- 法律页面 -->
     <url>
         <loc>https://cloakimg.com/privacy-policy.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.4</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/terms-of-service.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.4</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/cookie-policy.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.4</priority>
     </url>
@@ -75,37 +75,37 @@
     <!-- 工具页面 -->
     <url>
         <loc>https://cloakimg.com/tools/id-photo.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/tools/upscaler.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/tools/bg-remover.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/tools/compressor.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/tools/convert.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://cloakimg.com/tools/resize.html</loc>
-        <lastmod>2026-07-18</lastmod>
+        <lastmod>2026-07-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
