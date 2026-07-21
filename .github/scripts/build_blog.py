@@ -1,28 +1,40 @@
 #!/usr/bin/env python3
 """
 Build blog from GitHub Issues
-- Fetches all issues with label "blog"
-- Converts Markdown to HTML
-- Generates individual post pages
-- Updates blog.html with post list
-- Generates sitemap.xml
 """
 
 import os
+import sys
 import re
 import html
+import json
 import requests
 import markdown
-import frontmatter
 from pathlib import Path
 from datetime import datetime
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
 
-# Configuration
-REPO = os.environ.get('GITHUB_REPO', 'your-username/your-repo')
+# ============================================================
+# 调试信息 - 检查环境
+# ============================================================
+print("=" * 50)
+print("BUILD BLOG SCRIPT STARTED")
+print("=" * 50)
+print(f"Python version: {sys.version}")
+print(f"Current directory: {os.getcwd()}")
+print(f"Files in current directory: {os.listdir('.')[:20]}")
+
+# ============================================================
+# 配置
+# ============================================================
+REPO = os.environ.get('GITHUB_REPO')
 TOKEN = os.environ.get('GITHUB_TOKEN')
-BASE_URL = 'https://cloakimg.com'
+
+print(f"REPO: {REPO}")
+print(f"TOKEN: {'✓ Set' if TOKEN else '✗ NOT SET'}")
+
+if not REPO or not TOKEN:
+    print("❌ ERROR: REPO or TOKEN environment variable not set!")
+    sys.exit(1)
 
 API_URL = f'https://api.github.com/repos/{REPO}/issues'
 HEADERS = {
@@ -30,20 +42,27 @@ HEADERS = {
     'Accept': 'application/vnd.github.v3+json'
 }
 
-# Paths
+# ============================================================
+# 路径
+# ============================================================
 BLOG_DIR = Path('blog')
 POSTS_DIR = BLOG_DIR / 'posts'
 INDEX_FILE = Path('frontend/blog.html')
-SITEMAP_FILE = Path('sitemap.xml')
-TEMPLATE_DIR = Path('.github/templates')
 
-# Create directories
+print(f"BLOG_DIR: {BLOG_DIR}")
+print(f"POSTS_DIR: {POSTS_DIR}")
+print(f"INDEX_FILE: {INDEX_FILE}")
+
+# 创建目录
+BLOG_DIR.mkdir(parents=True, exist_ok=True)
 POSTS_DIR.mkdir(parents=True, exist_ok=True)
-TEMPLATE_DIR.mkdir(parents=True, exist_ok=True)
 
-
+# ============================================================
+# 函数
+# ============================================================
 def fetch_blog_issues():
     """Fetch all issues with 'blog' label"""
+    print("Fetching blog issues...")
     params = {
         'labels': 'blog',
         'state': 'all',
@@ -57,21 +76,27 @@ def fetch_blog_issues():
     
     while True:
         params['page'] = page
-        response = requests.get(API_URL, headers=HEADERS, params=params)
-        
-        if response.status_code != 200:
-            print(f"❌ API Error: {response.status_code}")
-            print(response.text)
+        try:
+            response = requests.get(API_URL, headers=HEADERS, params=params, timeout=30)
+            print(f"  API response status: {response.status_code}")
+            
+            if response.status_code != 200:
+                print(f"  ❌ API Error: {response.status_code}")
+                print(f"  Response: {response.text[:200]}")
+                break
+            
+            issues = response.json()
+            if not issues:
+                break
+            
+            # 过滤掉 Pull Requests
+            issues = [i for i in issues if 'pull_request' not in i]
+            all_issues.extend(issues)
+            page += 1
+            
+        except Exception as e:
+            print(f"  ❌ API request failed: {e}")
             break
-        
-        issues = response.json()
-        if not issues:
-            break
-        
-        # Filter out pull requests (they appear as issues too)
-        issues = [i for i in issues if 'pull_request' not in i]
-        all_issues.extend(issues)
-        page += 1
     
     print(f"✅ Found {len(all_issues)} blog issues")
     return all_issues
@@ -79,25 +104,18 @@ def fetch_blog_issues():
 
 def parse_issue(issue):
     """Parse issue data into blog post structure"""
-    # Extract frontmatter from body if exists
-    body = issue.get('body', '')
-    
-    try:
-        post = frontmatter.loads(body)
-        content = post.content
-        metadata = post.metadata
-    except:
-        # No frontmatter, use defaults
-        content = body
-        metadata = {}
-    
-    # Generate slug from title
+    body = issue.get('body', '') or ''
     title = issue.get('title', 'Untitled')
+    
+    # 生成 slug
     slug = re.sub(r'[^a-zA-Z0-9\-]', '-', title.lower())
     slug = re.sub(r'-+', '-', slug).strip('-')
-    issue_number = issue.get('number')
     
-    # Parse date
+    # 如果 slug 为空，使用 issue number
+    if not slug:
+        slug = f"post-{issue.get('number', 0)}"
+    
+    # 日期
     created_at = issue.get('created_at', datetime.now().isoformat())
     try:
         date_obj = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
@@ -107,58 +125,50 @@ def parse_issue(issue):
         date_str = datetime.now().strftime('%Y-%m-%d')
         display_date = datetime.now().strftime('%B %d, %Y')
     
-    # Extract labels (categories)
-    labels = [label.get('name', '') for label in issue.get('labels', []) if label.get('name') != 'blog']
+    # 分类
+    labels = [l.get('name', '') for l in issue.get('labels', []) if l.get('name') != 'blog']
     category = labels[0] if labels else 'Uncategorized'
     
-    # Extract excerpt (first 200 chars of content)
-    plain_text = re.sub(r'[#\*\`\_\[\]\(\)]', '', content)
+    # 摘要
+    plain_text = re.sub(r'[#\*\`\_\[\]\(\)]', '', body)
     excerpt = plain_text[:200].strip()
     if len(plain_text) > 200:
         excerpt += '...'
+    if not excerpt:
+        excerpt = 'Read this article to learn more.'
+    
+    print(f"  📝 Parsed: {title} -> slug: {slug}")
     
     return {
-        'id': issue_number,
+        'id': issue.get('number'),
         'title': title,
         'slug': slug,
-        'content': content,
+        'content': body,
         'excerpt': excerpt,
         'category': category,
         'date': date_str,
         'display_date': display_date,
-        'labels': labels,
-        'issue_url': issue.get('html_url'),
-        'created_at': issue.get('created_at'),
-        'updated_at': issue.get('updated_at'),
-        'author': issue.get('user', {}).get('login', 'Anonymous')
+        'author': issue.get('user', {}).get('login', 'Anonymous'),
+        'created_at': issue.get('created_at')
     }
-
-
-def convert_markdown_to_html(markdown_text):
-    """Convert markdown to HTML with extensions"""
-    md = markdown.Markdown(extensions=[
-        'extra',
-        'codehilite',
-        'toc',
-        'tables',
-        'fenced_code'
-    ])
-    return md.convert(markdown_text)
 
 
 def generate_post_html(post):
     """Generate individual post HTML page"""
+    try:
+        content_html = markdown.markdown(
+            post['content'],
+            extensions=['extra', 'codehilite', 'toc', 'tables', 'fenced_code']
+        )
+    except Exception as e:
+        print(f"  ⚠️ Markdown conversion error: {e}")
+        content_html = f"<p>{html.escape(post['content'])}</p>"
     
-    # Convert content to HTML
-    content_html = convert_markdown_to_html(post['content'])
+    word_count = len(post['content'].split())
+    read_time = max(1, round(word_count / 200))
     
-    # Read template or use default
-    template_path = TEMPLATE_DIR / 'post_template.html'
-    if template_path.exists():
-        with open(template_path, 'r', encoding='utf-8') as f:
-            template = f.read()
-    else:
-        template = '''<!DOCTYPE html>
+    # 简化模板
+    template = '''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -201,22 +211,13 @@ def generate_post_html(post):
         .footer-right a { color: #475569; text-decoration: none; font-size: 0.85rem; }
         .footer-right a:hover { color: #2563eb; }
         .footer-bottom { text-align: center; font-size: 0.75rem; color: #94a3b8; padding-top: 1rem; margin-top: 1rem; border-top: 1px solid #f1f5f9; }
-        @media (max-width: 768px) {
-            .post-hero h1 { font-size: 1.8rem; }
-            .post-body { padding: 1.5rem; }
-            .footer-content { flex-direction: column; text-align: center; }
-            .footer-right { flex-wrap: wrap; justify-content: center; }
-            .related-tools-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (max-width: 768px) { .post-hero h1 { font-size: 1.8rem; } .post-body { padding: 1.5rem; } .footer-content { flex-direction: column; text-align: center; } .footer-right { flex-wrap: wrap; justify-content: center; } }
     </style>
 </head>
 <body>
 <div class="app-container">
     <header class="site-header">
-        <div class="logo">
-            <h1>CloakImg <span>AI</span></h1>
-            <span>Professional AI Image Toolkit</span>
-        </div>
+        <div class="logo"><h1>CloakImg <span>AI</span></h1><span>Professional AI Image Toolkit</span></div>
         <div class="nav-links">
             <a href="../../index.html" class="nav-link">🏠 Home</a>
             <a href="../../blog.html" class="nav-link active">📝 Blog</a>
@@ -246,7 +247,6 @@ def generate_post_html(post):
             <a href="../../blog.html" class="post-back">← Back to Blog</a>
         </div>
 
-        <!-- Related Tools -->
         <div class="related-tools">
             <h3><i class="fas fa-link" style="color:#2563eb;"></i> Try Our AI Tools</h3>
             <div class="related-tools-grid">
@@ -287,240 +287,130 @@ def generate_post_html(post):
 </body>
 </html>'''
     
-    # Calculate read time (approx 200 words per minute)
-    word_count = len(post['content'].split())
-    read_time = max(1, round(word_count / 200))
-    read_time_str = f"{read_time} min read"
-    
-    # Replace placeholders
-    html_content = template
-    html_content = html_content.replace('__TITLE__', html.escape(post['title']))
-    html_content = html_content.replace('__EXCERPT__', html.escape(post['excerpt']))
-    html_content = html_content.replace('__SLUG__', post['slug'])
-    html_content = html_content.replace('__CATEGORY__', html.escape(post['category']))
-    html_content = html_content.replace('__DISPLAY_DATE__', post['display_date'])
-    html_content = html_content.replace('__READ_TIME__', read_time_str)
-    html_content = html_content.replace('__AUTHOR__', html.escape(post['author']))
-    html_content = html_content.replace('__CONTENT__', content_html)
-    
-    return html_content
+    return (template
+        .replace('__TITLE__', html.escape(post['title']))
+        .replace('__EXCERPT__', html.escape(post['excerpt']))
+        .replace('__SLUG__', post['slug'])
+        .replace('__CATEGORY__', html.escape(post['category']))
+        .replace('__DISPLAY_DATE__', post['display_date'])
+        .replace('__READ_TIME__', f"{read_time} min read")
+        .replace('__AUTHOR__', html.escape(post['author']))
+        .replace('__CONTENT__', content_html)
+    )
 
 
 def generate_index_html(posts):
     """Generate updated blog.html with post list"""
-    
-    # Sort posts by date (newest first)
     sorted_posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)
+    print(f"Generating index with {len(sorted_posts)} posts...")
     
-    # Generate post cards HTML
-    cards_html = ''
-    if sorted_posts:
-        for post in sorted_posts[:20]:  # Show latest 20 posts
-            read_time = max(1, round(len(post['content'].split()) / 200))
-            cards_html += f'''
+    cards = ''
+    for p in sorted_posts[:20]:
+        read_time = max(1, round(len(p['content'].split()) / 200))
+        cards += f'''
                 <div class="blog-card-full">
                     <div class="blog-image-icon"><i class="fas fa-file-alt"></i></div>
                     <div class="blog-content">
-                        <div class="blog-category">{html.escape(post['category'])}</div>
-                        <h3 class="blog-title"><a href="blog/posts/{post['slug']}.html">{html.escape(post['title'])}</a></h3>
-                        <p class="blog-excerpt">{html.escape(post['excerpt'])}</p>
+                        <div class="blog-category">{html.escape(p['category'])}</div>
+                        <h3 class="blog-title">{html.escape(p['title'])}</h3>
+                        <p class="blog-excerpt">{html.escape(p['excerpt'])}</p>
                         <div class="blog-meta">
-                            <span><i class="far fa-calendar"></i> {post['display_date']}</span>
+                            <span><i class="far fa-calendar"></i> {p['display_date']}</span>
                             <span><i class="far fa-clock"></i> {read_time} min read</span>
                         </div>
-                        <a href="blog/posts/{post['slug']}.html" class="blog-read-more">Read Full Article →</a>
+                        <a href="blog/posts/{p['slug']}.html" class="blog-read-more">Read Full Article →</a>
                     </div>
                 </div>
 '''
     
-    # Read existing blog.html or use template
-    if INDEX_FILE.exists():
-        with open(INDEX_FILE, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Find the blog grid and replace content
-        import re
-        pattern = r'(<div class="blog-grid-full" id="blogGrid">).*?(</div>)'
-        if cards_html:
-            replacement = f'\\1\n{cards_html}\n                \\2'
+    try:
+        if INDEX_FILE.exists():
+            with open(INDEX_FILE, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            import re
+            # 替换 blog grid 内容
+            content = re.sub(
+                r'(<div class="blog-grid-full" id="blogGrid">).*?(</div>)',
+                f'\\1\n{cards}\n                \\2',
+                content,
+                flags=re.DOTALL
+            )
+            
+            # 更新 All 按钮计数
+            content = re.sub(
+                r'(<button class="filter-btn active" data-filter="all">)All(</button>)',
+                f'\\1All ({len(sorted_posts)})\\2',
+                content
+            )
+            
+            with open(INDEX_FILE, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"✅ Updated {INDEX_FILE}")
         else:
-            replacement = f'\\1\n                <div class="blog-empty">\n                    <i class="fas fa-newspaper fa-3x" style="color:#94a3b8;"></i>\n                    <p style="color:#64748b; margin-top:1rem;">No articles published yet.</p>\n                    <p style="color:#94a3b8; font-size:0.85rem;">Check back soon for AI image editing tips!</p>\n                </div>\n                \\2'
-        content = re.sub(pattern, replacement, content, flags=re.DOTALL)
-        
-        # Update the "All" filter button count
-        content = re.sub(r'(<button class="filter-btn active" data-filter="all">)All(</button>)',
-                         f'\\1All ({len(sorted_posts)})\\2', content)
-        
-        # Update category counts
-        categories = {}
-        for post in sorted_posts:
-            cat = post['category']
-            categories[cat] = categories.get(cat, 0) + 1
-        
-        for cat, count in categories.items():
-            btn_pattern = rf'(<button class="filter-btn" data-filter="{cat}">){cat}(</button>)'
-            content = re.sub(btn_pattern, f'\\1{cat} ({count})\\2', content, flags=re.IGNORECASE)
-        
-        with open(INDEX_FILE, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"✅ Blog index updated: {INDEX_FILE}")
-    else:
-        print(f"⚠️ {INDEX_FILE} not found, creating new one...")
-        # Create a minimal blog.html
-        minimal_blog = f'''<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Blog - CloakImg AI</title>
-<link rel="stylesheet" href="common.css">
-</head>
-<body>
-<div class="app-container">
-    <header class="site-header"><div class="logo"><h1>CloakImg <span>AI</span></h1></div></header>
-    <div class="blog-grid-full" id="blogGrid">
-        {cards_html if cards_html else '<div class="blog-empty"><p>No articles yet.</p></div>'}
-    </div>
-</div>
-</body>
-</html>'''
-        with open(INDEX_FILE, 'w', encoding='utf-8') as f:
-            f.write(minimal_blog)
-        print(f"✅ Created new {INDEX_FILE}")
-
-
-def generate_sitemap(posts):
-    """Generate sitemap.xml with all pages and blog posts"""
-    
-    # Create root element
-    urlset = ET.Element('urlset', xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
-    
-    # Get current date
-    today = datetime.now().strftime('%Y-%m-%d')
-    
-    # 1. Home page
-    home = ET.SubElement(urlset, 'url')
-    loc = ET.SubElement(home, 'loc')
-    loc.text = f"{BASE_URL}/"
-    lastmod = ET.SubElement(home, 'lastmod')
-    lastmod.text = today
-    changefreq = ET.SubElement(home, 'changefreq')
-    changefreq.text = 'daily'
-    priority = ET.SubElement(home, 'priority')
-    priority.text = '1.0'
-    
-    # 2. Blog list page
-    blog = ET.SubElement(urlset, 'url')
-    loc = ET.SubElement(blog, 'loc')
-    loc.text = f"{BASE_URL}/blog.html"
-    lastmod = ET.SubElement(blog, 'lastmod')
-    lastmod.text = today
-    changefreq = ET.SubElement(blog, 'changefreq')
-    changefreq.text = 'daily'
-    priority = ET.SubElement(blog, 'priority')
-    priority.text = '0.9'
-    
-    # 3. All blog post pages
-    sorted_posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)
-    for post in sorted_posts:
-        url = ET.SubElement(urlset, 'url')
-        loc = ET.SubElement(url, 'loc')
-        loc.text = f"{BASE_URL}/blog/posts/{post['slug']}.html"
-        
-        lastmod = ET.SubElement(url, 'lastmod')
-        if post.get('updated_at'):
-            lastmod.text = post['updated_at'][:10]
-        elif post.get('created_at'):
-            lastmod.text = post['created_at'][:10]
-        else:
-            lastmod.text = today
-        
-        changefreq = ET.SubElement(url, 'changefreq')
-        changefreq.text = 'weekly'
-        
-        priority = ET.SubElement(url, 'priority')
-        priority.text = '0.8'
-    
-    # 4. Core tool pages
-    tool_pages = [
-        {'path': 'tools.html', 'priority': '0.7'},
-        {'path': 'tools/id-photo.html', 'priority': '0.6'},
-        {'path': 'tools/upscaler.html', 'priority': '0.6'},
-        {'path': 'tools/bg-remover.html', 'priority': '0.6'},
-        {'path': 'tools/compressor.html', 'priority': '0.6'},
-        {'path': 'tools/convert.html', 'priority': '0.6'},
-        {'path': 'tools/resize.html', 'priority': '0.6'},
-        {'path': 'pricing.html', 'priority': '0.6'},
-        {'path': 'help.html', 'priority': '0.5'},
-        {'path': 'contact.html', 'priority': '0.5'},
-        {'path': 'about.html', 'priority': '0.5'},
-        {'path': 'privacy-policy.html', 'priority': '0.3'},
-        {'path': 'terms-of-service.html', 'priority': '0.3'},
-        {'path': 'cookie-policy.html', 'priority': '0.3'},
-        {'path': 'account.html', 'priority': '0.4'},
-    ]
-    
-    for page in tool_pages:
-        url = ET.SubElement(urlset, 'url')
-        loc = ET.SubElement(url, 'loc')
-        loc.text = f"{BASE_URL}/{page['path']}"
-        lastmod = ET.SubElement(url, 'lastmod')
-        lastmod.text = today
-        changefreq = ET.SubElement(url, 'changefreq')
-        changefreq.text = 'monthly'
-        priority = ET.SubElement(url, 'priority')
-        priority.text = page['priority']
-    
-    # Generate pretty XML
-    xml_str = ET.tostring(urlset, encoding='unicode')
-    dom = minidom.parseString(xml_str)
-    pretty_xml = dom.toprettyxml(indent="  ")
-    
-    # Add XML declaration
-    sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n' + '\n'.join(pretty_xml.split('\n')[1:])
-    
-    # Write to file
-    with open(SITEMAP_FILE, 'w', encoding='utf-8') as f:
-        f.write(sitemap_content)
-    
-    print(f"✅ Sitemap generated: {SITEMAP_FILE}")
+            print(f"⚠️ {INDEX_FILE} not found!")
+            
+    except Exception as e:
+        print(f"❌ Error updating index: {e}")
 
 
 def main():
     print("🚀 Building blog from GitHub Issues...")
-    print(f"📁 Repository: {REPO}")
-    print(f"🌐 Base URL: {BASE_URL}")
     
-    # Fetch issues
+    # 检查依赖
+    try:
+        import markdown
+        import requests
+        import frontmatter
+        print("✅ All dependencies imported successfully")
+    except ImportError as e:
+        print(f"❌ Missing dependency: {e}")
+        print("Please install: pip install markdown pyyaml frontmatter requests")
+        sys.exit(1)
+    
+    # 获取 Issues
     issues = fetch_blog_issues()
     
     if not issues:
         print("⚠️ No blog issues found")
-        # Generate empty index and sitemap with core pages
-        generate_index_html([])
-        generate_sitemap([])
-        print("✅ Build complete (no posts)")
-        return
+        print("Creating a placeholder post...")
+        # 创建一个占位文章
+        issues = [{
+            'number': 0,
+            'title': 'Welcome to CloakImg AI Blog',
+            'body': 'This is the first post on the CloakImg AI Blog. Stay tuned for articles about AI image editing!',
+            'created_at': datetime.now().isoformat(),
+            'user': {'login': 'CloakImg'},
+            'labels': [{'name': 'blog'}, {'name': 'Tutorial'}]
+        }]
     
-    # Parse posts
+    # 解析并生成
     posts = []
     for issue in issues:
         post = parse_issue(issue)
         posts.append(post)
-        print(f"📝 Processing: {post['title']}")
         
-        # Generate post HTML
-        post_html = generate_post_html(post)
-        post_file = POSTS_DIR / f"{post['slug']}.html"
-        with open(post_file, 'w', encoding='utf-8') as f:
-            f.write(post_html)
-        print(f"   ✅ Generated: {post_file}")
+        # 生成文章页面
+        try:
+            post_html = generate_post_html(post)
+            post_file = POSTS_DIR / f"{post['slug']}.html"
+            with open(post_file, 'w', encoding='utf-8') as f:
+                f.write(post_html)
+            print(f"  ✅ Generated: {post_file}")
+        except Exception as e:
+            print(f"  ❌ Error generating post: {e}")
     
-    # Generate index
+    # 更新索引
     generate_index_html(posts)
-    
-    # Generate sitemap
-    generate_sitemap(posts)
     
     print(f"🎉 Build complete! {len(posts)} posts generated.")
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"❌ Fatal error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
