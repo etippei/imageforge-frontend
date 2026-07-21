@@ -47,7 +47,7 @@ HEADERS = {
 # ============================================================
 BLOG_DIR = Path('blog')
 POSTS_DIR = BLOG_DIR / 'posts'
-INDEX_FILE = Path('frontend/blog.html')
+INDEX_FILE = Path('blog.html')
 
 print(f"BLOG_DIR: {BLOG_DIR}")
 print(f"POSTS_DIR: {POSTS_DIR}")
