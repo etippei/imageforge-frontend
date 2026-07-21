@@ -60,11 +60,73 @@
             color: #475569;
         }
 
+        /* ===== 搜索框 ===== */
+        .blog-search {
+            max-width: 500px;
+            margin: 0 auto 1.8rem auto;
+            position: relative;
+        }
+        .blog-search input {
+            width: 100%;
+            padding: 0.7rem 1.2rem 0.7rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        .blog-search input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .blog-search input::placeholder {
+            color: #94a3b8;
+        }
+        .blog-search .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .blog-search .search-clear {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: none;
+            background: none;
+            border: none;
+            padding: 0.2rem 0.4rem;
+        }
+        .blog-search .search-clear:hover {
+            color: #ef4444;
+        }
+        .blog-search .search-clear.visible {
+            display: block;
+        }
+        .search-stats {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+        .search-stats strong {
+            color: #2563eb;
+        }
+
         .blog-filter-bar {
             display: flex;
             flex-wrap: wrap;
             gap: 0.6rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             justify-content: center;
         }
         .filter-btn {
@@ -115,6 +177,16 @@
         .blog-card-full:nth-child(4) { border-left-color: #d97706; }
         .blog-card-full:nth-child(5) { border-left-color: #dc2626; }
         .blog-card-full:nth-child(6) { border-left-color: #7c3aed; }
+
+        /* 搜索结果高亮 */
+        .blog-card-full.hidden {
+            display: none !important;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
 
         .blog-image-icon {
             display: flex;
@@ -281,6 +353,7 @@
             .related-tools-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-content { flex-direction: column; text-align: center; }
             .footer-right { flex-wrap: wrap; justify-content: center; }
+            .blog-search { max-width: 100%; padding: 0 1rem; }
         }
     </style>
 </head>
@@ -306,6 +379,14 @@
         <h1>📝 CloakImg AI Blog</h1>
         <p>Tips, tutorials & news about AI image processing — updated weekly</p>
     </div>
+
+    <!-- ===== 搜索框 ===== -->
+    <div class="blog-search">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search articles..." autocomplete="off">
+        <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+    </div>
+    <div class="search-stats" id="searchStats"></div>
 
     <!-- ===== FILTER BAR ===== -->
     <div class="blog-filter-bar">
@@ -365,47 +446,30 @@
         }
 
         // ============================================================
-        // 动态加载博客文章
+        // DOM 元素
         // ============================================================
         const grid = document.getElementById('blogGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        const searchStats = document.getElementById('searchStats');
+        let allArticles = [];
+        let currentFilter = 'all';
 
-        // 检查是否已有文章卡片（由 Actions 脚本生成）
-        function hasArticles() {
-            const cards = grid.querySelectorAll('.blog-card-full');
-            return cards.length > 0;
-        }
-
-        // 从文件名推断分类
-        function inferCategory(filename) {
-            const lower = filename.toLowerCase();
-            if (lower.includes('tutorial')) return 'Tutorial';
-            if (lower.includes('guide')) return 'Guide';
-            if (lower.includes('tip')) return 'Tips';
-            if (lower.includes('performance')) return 'Performance';
-            if (lower.includes('trend')) return 'Trends';
-            return 'Article';
-        }
-
-        // 解析日期从文件名或内容
-        function parseDate(filename) {
-            const match = filename.match(/(\d{4}-\d{2}-\d{2})/);
-            if (match) {
-                const d = new Date(match[1]);
-                if (!isNaN(d)) {
-                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                }
-            }
-            return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        }
-
-        // 加载文章列表
+        // ============================================================
+        // 加载文章
+        // ============================================================
         async function loadArticles() {
-            if (hasArticles()) {
+            // 检查是否已有文章卡片（由 Actions 脚本生成）
+            const existingCards = grid.querySelectorAll('.blog-card-full');
+            if (existingCards.length > 0) {
+                // 如果已经有文章卡片，直接使用
+                allArticles = Array.from(existingCards);
+                updateSearchStats();
                 return;
             }
 
             try {
-                // 尝试获取 blog/posts/ 目录下的文件列表
+                // 已知文章列表
                 const knownPosts = [
                     'how-to-upscale-images-without-losing-quality-a-complete-guide'
                 ];
@@ -441,11 +505,12 @@
                     return;
                 }
 
-                let cards = '';
+                // 生成文章卡片
+                let cardsHtml = '';
                 articles.forEach(p => {
                     const readTime = Math.max(1, Math.round(p.title.length / 30));
-                    cards += `
-                        <div class="blog-card-full">
+                    cardsHtml += `
+                        <div class="blog-card-full" data-title="${p.title.toLowerCase()}" data-category="${p.category}">
                             <div class="blog-image-icon"><i class="fas fa-file-alt"></i></div>
                             <div class="blog-content">
                                 <div class="blog-category">${p.category}</div>
@@ -461,7 +526,9 @@
                     `;
                 });
 
-                grid.innerHTML = cards;
+                grid.innerHTML = cardsHtml;
+                allArticles = Array.from(grid.querySelectorAll('.blog-card-full'));
+                updateSearchStats();
 
             } catch (error) {
                 console.log('Error loading articles:', error);
@@ -475,35 +542,166 @@
             }
         }
 
-        // ===== 分类筛选功能 =====
+        function inferCategory(filename) {
+            const lower = filename.toLowerCase();
+            if (lower.includes('tutorial')) return 'Tutorial';
+            if (lower.includes('guide')) return 'Guide';
+            if (lower.includes('tip')) return 'Tips';
+            if (lower.includes('performance')) return 'Performance';
+            if (lower.includes('trend')) return 'Trends';
+            return 'Article';
+        }
+
+        function parseDate(filename) {
+            const match = filename.match(/(\d{4}-\d{2}-\d{2})/);
+            if (match) {
+                const d = new Date(match[1]);
+                if (!isNaN(d)) {
+                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            }
+            return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        // ============================================================
+        // 搜索功能
+        // ============================================================
+        function performSearch(query) {
+            const trimmedQuery = query.trim().toLowerCase();
+            let visibleCount = 0;
+
+            allArticles.forEach(card => {
+                const title = card.dataset.title || '';
+                const excerpt = card.querySelector('.blog-excerpt')?.textContent?.toLowerCase() || '';
+                const category = card.dataset.category || '';
+                const matchesCategory = currentFilter === 'all' || category === currentFilter;
+                const matchesSearch = trimmedQuery === '' ||
+                    title.includes(trimmedQuery) ||
+                    excerpt.includes(trimmedQuery);
+
+                if (matchesCategory && matchesSearch) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                    // 高亮匹配的关键词
+                    if (trimmedQuery !== '') {
+                        highlightText(card, trimmedQuery);
+                    } else {
+                        removeHighlights(card);
+                    }
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            updateSearchStats(visibleCount, trimmedQuery);
+            updateClearButton(trimmedQuery);
+        }
+
+        function highlightText(card, query) {
+            // 清除已有高亮
+            removeHighlights(card);
+
+            const titleEl = card.querySelector('.blog-title');
+            const excerptEl = card.querySelector('.blog-excerpt');
+
+            if (titleEl) {
+                const originalTitle = titleEl.textContent;
+                const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                titleEl.innerHTML = originalTitle.replace(regex, '<span class="highlight">$1</span>');
+                // 保留链接
+                const link = titleEl.querySelector('a');
+                if (link) {
+                    const linkText = link.textContent;
+                    link.innerHTML = linkText.replace(regex, '<span class="highlight">$1</span>');
+                }
+            }
+
+            if (excerptEl) {
+                const originalExcerpt = excerptEl.textContent;
+                const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                excerptEl.innerHTML = originalExcerpt.replace(regex, '<span class="highlight">$1</span>');
+            }
+        }
+
+        function removeHighlights(card) {
+            const titleEl = card.querySelector('.blog-title');
+            const excerptEl = card.querySelector('.blog-excerpt');
+
+            if (titleEl) {
+                const link = titleEl.querySelector('a');
+                if (link) {
+                    const text = link.textContent;
+                    link.innerHTML = text;
+                }
+            }
+
+            if (excerptEl) {
+                const text = excerptEl.textContent;
+                excerptEl.innerHTML = text;
+            }
+        }
+
+        function updateSearchStats(visibleCount, query) {
+            const total = allArticles.length;
+            if (query && query.trim() !== '') {
+                searchStats.innerHTML = `Showing <strong>${visibleCount}</strong> of ${total} article${total > 1 ? 's' : ''} matching "<strong>${query}</strong>"`;
+            } else {
+                searchStats.innerHTML = '';
+            }
+        }
+
+        function updateClearButton(query) {
+            if (query && query.trim() !== '') {
+                searchClear.classList.add('visible');
+            } else {
+                searchClear.classList.remove('visible');
+            }
+        }
+
+        // ============================================================
+        // 分类筛选功能
+        // ============================================================
         function initFilters() {
             const filterBtns = document.querySelectorAll('.filter-btn');
 
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const filter = this.dataset.filter;
+                    currentFilter = this.dataset.filter;
 
                     filterBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
 
-                    const cards = document.querySelectorAll('.blog-card-full');
-                    cards.forEach(card => {
-                        if (filter === 'all') {
-                            card.style.display = 'flex';
-                        } else {
-                            const category = card.querySelector('.blog-category');
-                            if (category) {
-                                card.style.display = category.textContent === filter ? 'flex' : 'none';
-                            } else {
-                                card.style.display = 'none';
-                            }
-                        }
-                    });
+                    // 重新应用搜索和筛选
+                    performSearch(searchInput.value);
                 });
             });
         }
 
-        // ===== 执行加载 =====
+        // ============================================================
+        // 事件绑定
+        // ============================================================
+        searchInput.addEventListener('input', function() {
+            performSearch(this.value);
+        });
+
+        searchClear.addEventListener('click', function() {
+            searchInput.value = '';
+            performSearch('');
+            searchInput.focus();
+        });
+
+        // 键盘快捷键：ESC 清空搜索
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                performSearch('');
+                searchInput.blur();
+            }
+        });
+
+        // ============================================================
+        // 执行加载
+        // ============================================================
         setTimeout(() => {
             loadArticles();
             initFilters();
