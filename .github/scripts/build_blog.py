@@ -111,7 +111,6 @@ def parse_issue(issue):
     slug = re.sub(r'[^a-zA-Z0-9\-]', '-', title.lower())
     slug = re.sub(r'-+', '-', slug).strip('-')
     
-    # 如果 slug 为空，使用 issue number
     if not slug:
         slug = f"post-{issue.get('number', 0)}"
     
@@ -167,7 +166,7 @@ def generate_post_html(post):
     word_count = len(post['content'].split())
     read_time = max(1, round(word_count / 200))
     
-    # 简化模板
+    # 文章页面模板
     template = '''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -312,7 +311,7 @@ def generate_index_html(posts):
                     <div class="blog-image-icon"><i class="fas fa-file-alt"></i></div>
                     <div class="blog-content">
                         <div class="blog-category">{html.escape(p['category'])}</div>
-                        <h3 class="blog-title">{html.escape(p['title'])}</h3>
+                        <h3 class="blog-title"><a href="blog/posts/{p['slug']}.html">{html.escape(p['title'])}</a></h3>
                         <p class="blog-excerpt">{html.escape(p['excerpt'])}</p>
                         <div class="blog-meta">
                             <span><i class="far fa-calendar"></i> {p['display_date']}</span>
@@ -354,6 +353,29 @@ def generate_index_html(posts):
         print(f"❌ Error updating index: {e}")
 
 
+def generate_posts_json(posts):
+    """生成 posts.json 索引文件"""
+    sorted_posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)
+    
+    posts_data = []
+    for p in sorted_posts:
+        posts_data.append({
+            'slug': p['slug'],
+            'title': p['title'],
+            'category': p['category'],
+            'date': p['date'],
+            'display_date': p['display_date'],
+            'excerpt': p['excerpt'],
+            'url': f"blog/posts/{p['slug']}.html"
+        })
+    
+    json_file = BLOG_DIR / 'posts.json'
+    with open(json_file, 'w', encoding='utf-8') as f:
+        json.dump(posts_data, f, ensure_ascii=False, indent=2)
+    
+    print(f"✅ Generated posts.json with {len(posts_data)} posts")
+
+
 def main():
     print("🚀 Building blog from GitHub Issues...")
     
@@ -361,7 +383,6 @@ def main():
     try:
         import markdown
         import requests
-        import frontmatter
         print("✅ All dependencies imported successfully")
     except ImportError as e:
         print(f"❌ Missing dependency: {e}")
@@ -373,7 +394,6 @@ def main():
     
     if not issues:
         print("⚠️ No blog issues found")
-        print("Creating a placeholder post...")
         # 创建一个占位文章
         issues = [{
             'number': 0,
@@ -402,6 +422,7 @@ def main():
     
     # 更新索引
     generate_index_html(posts)
+    generate_posts_json(posts)
     
     print(f"🎉 Build complete! {len(posts)} posts generated.")
 
