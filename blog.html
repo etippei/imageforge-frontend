@@ -178,7 +178,6 @@
         .blog-card-full:nth-child(5) { border-left-color: #dc2626; }
         .blog-card-full:nth-child(6) { border-left-color: #7c3aed; }
 
-        /* 搜索结果高亮 */
         .blog-card-full.hidden {
             display: none !important;
         }
@@ -456,45 +455,18 @@
         let currentFilter = 'all';
 
         // ============================================================
-        // 加载文章
+        // 从 posts.json 加载文章列表（由 GitHub Actions 自动生成）
         // ============================================================
         async function loadArticles() {
-            // 检查是否已有文章卡片（由 Actions 脚本生成）
-            const existingCards = grid.querySelectorAll('.blog-card-full');
-            if (existingCards.length > 0) {
-                // 如果已经有文章卡片，直接使用
-                allArticles = Array.from(existingCards);
-                updateSearchStats();
-                return;
-            }
-
             try {
-                // 已知文章列表
-                const knownPosts = [
-                    'how-to-upscale-images-without-losing-quality-a-complete-guide'
-                ];
-
-                let articles = [];
-                for (const slug of knownPosts) {
-                    try {
-                        const check = await fetch(`blog/posts/${slug}.html`, { method: 'HEAD' });
-                        if (check.ok) {
-                            const title = slug
-                                .replace(/-/g, ' ')
-                                .replace(/\b\w/g, l => l.toUpperCase());
-                            articles.push({
-                                slug: slug,
-                                title: title,
-                                category: inferCategory(slug),
-                                date: parseDate(slug)
-                            });
-                        }
-                    } catch (e) {
-                        // 忽略
-                    }
+                const response = await fetch('blog/posts.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load posts.json');
                 }
 
-                if (articles.length === 0) {
+                const posts = await response.json();
+
+                if (posts.length === 0) {
                     grid.innerHTML = `
                         <div class="blog-empty">
                             <i class="fas fa-newspaper fa-3x"></i>
@@ -507,20 +479,21 @@
 
                 // 生成文章卡片
                 let cardsHtml = '';
-                articles.forEach(p => {
-                    const readTime = Math.max(1, Math.round(p.title.length / 30));
+                posts.forEach(p => {
+                    const readTime = Math.max(1, Math.round((p.excerpt || p.title).length / 200));
+                    const excerpt = p.excerpt || 'Read this article to learn more about AI image processing.';
                     cardsHtml += `
                         <div class="blog-card-full" data-title="${p.title.toLowerCase()}" data-category="${p.category}">
                             <div class="blog-image-icon"><i class="fas fa-file-alt"></i></div>
                             <div class="blog-content">
                                 <div class="blog-category">${p.category}</div>
-                                <h3 class="blog-title"><a href="blog/posts/${p.slug}.html">${p.title}</a></h3>
-                                <p class="blog-excerpt">Read this article to learn more about AI image processing.</p>
+                                <h3 class="blog-title"><a href="${p.url}">${p.title}</a></h3>
+                                <p class="blog-excerpt">${excerpt}</p>
                                 <div class="blog-meta">
-                                    <span><i class="far fa-calendar"></i> ${p.date}</span>
+                                    <span><i class="far fa-calendar"></i> ${p.display_date}</span>
                                     <span><i class="far fa-clock"></i> ${readTime} min read</span>
                                 </div>
-                                <a href="blog/posts/${p.slug}.html" class="blog-read-more">Read Full Article →</a>
+                                <a href="${p.url}" class="blog-read-more">Read Full Article →</a>
                             </div>
                         </div>
                     `;
@@ -531,36 +504,15 @@
                 updateSearchStats();
 
             } catch (error) {
-                console.log('Error loading articles:', error);
+                console.error('Error loading articles:', error);
                 grid.innerHTML = `
                     <div class="blog-empty">
-                        <i class="fas fa-newspaper fa-3x"></i>
-                        <p style="margin-top:1rem;">No articles published yet.</p>
-                        <p style="color:#94a3b8; font-size:0.85rem;">Check back soon for AI image editing tips!</p>
+                        <i class="fas fa-exclamation-triangle fa-3x" style="color:#f59e0b;"></i>
+                        <p style="margin-top:1rem;">Unable to load articles.</p>
+                        <p style="color:#94a3b8; font-size:0.85rem;">Please refresh the page or try again later.</p>
                     </div>
                 `;
             }
-        }
-
-        function inferCategory(filename) {
-            const lower = filename.toLowerCase();
-            if (lower.includes('tutorial')) return 'Tutorial';
-            if (lower.includes('guide')) return 'Guide';
-            if (lower.includes('tip')) return 'Tips';
-            if (lower.includes('performance')) return 'Performance';
-            if (lower.includes('trend')) return 'Trends';
-            return 'Article';
-        }
-
-        function parseDate(filename) {
-            const match = filename.match(/(\d{4}-\d{2}-\d{2})/);
-            if (match) {
-                const d = new Date(match[1]);
-                if (!isNaN(d)) {
-                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                }
-            }
-            return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         }
 
         // ============================================================
@@ -582,7 +534,6 @@
                 if (matchesCategory && matchesSearch) {
                     card.classList.remove('hidden');
                     visibleCount++;
-                    // 高亮匹配的关键词
                     if (trimmedQuery !== '') {
                         highlightText(card, trimmedQuery);
                     } else {
@@ -598,28 +549,23 @@
         }
 
         function highlightText(card, query) {
-            // 清除已有高亮
             removeHighlights(card);
-
             const titleEl = card.querySelector('.blog-title');
             const excerptEl = card.querySelector('.blog-excerpt');
 
             if (titleEl) {
-                const originalTitle = titleEl.textContent;
-                const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                titleEl.innerHTML = originalTitle.replace(regex, '<span class="highlight">$1</span>');
-                // 保留链接
                 const link = titleEl.querySelector('a');
                 if (link) {
-                    const linkText = link.textContent;
-                    link.innerHTML = linkText.replace(regex, '<span class="highlight">$1</span>');
+                    const text = link.textContent;
+                    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    link.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
                 }
             }
 
             if (excerptEl) {
-                const originalExcerpt = excerptEl.textContent;
+                const text = excerptEl.textContent;
                 const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                excerptEl.innerHTML = originalExcerpt.replace(regex, '<span class="highlight">$1</span>');
+                excerptEl.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
             }
         }
 
@@ -630,14 +576,12 @@
             if (titleEl) {
                 const link = titleEl.querySelector('a');
                 if (link) {
-                    const text = link.textContent;
-                    link.innerHTML = text;
+                    link.innerHTML = link.textContent;
                 }
             }
 
             if (excerptEl) {
-                const text = excerptEl.textContent;
-                excerptEl.innerHTML = text;
+                excerptEl.innerHTML = excerptEl.textContent;
             }
         }
 
@@ -667,11 +611,8 @@
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     currentFilter = this.dataset.filter;
-
                     filterBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-
-                    // 重新应用搜索和筛选
                     performSearch(searchInput.value);
                 });
             });
@@ -690,7 +631,6 @@
             searchInput.focus();
         });
 
-        // 键盘快捷键：ESC 清空搜索
         searchInput.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 searchInput.value = '';
