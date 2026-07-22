@@ -2,10 +2,7 @@
 // 前端公共JS - 包含认证、API调用、使用统计
 // ============================================
 
-// ============================================
-// API配置 - 指向 Cloudflare Worker
-// ============================================
-const API_BASE = 'https://cloakimg-api.etiplpl.workers.dev/api';
+const API_BASE = 'https://imageforge-api.etiplpl.workers.dev/api';
 
 // ---------- 用户认证 ----------
 async function apiRequest(endpoint, options = {}) {
@@ -187,36 +184,20 @@ function displayUsageInfo(containerId, toolType) {
         const remaining = tool.remaining;
         const percent = limit > 0 ? (used / limit) * 100 : 0;
         
-        // 检查是否有额外额度（24小时套餐购买后，会有 extra_credits）
-        const extraCredits = usage.extra_credits || 0;
-        const totalRemaining = remaining + extraCredits;
-        
         let color = '#2563eb';
         if (percent > 80) color = '#ef4444';
         else if (percent > 50) color = '#f59e0b';
-        
-        let bottomText = '';
-        if (isPro) {
-            bottomText = '♾️ Unlimited';
-        } else if (extraCredits > 0) {
-            bottomText = `⚡ ${totalRemaining} remaining (${extraCredits} extra credits)`;
-        } else if (remaining <= 0) {
-            bottomText = `<a href="pricing.html#hourly" style="color: #f59e0b; font-weight: 600;">⬇️ Get 5 extra for $1.99</a>`;
-        } else {
-            bottomText = `${remaining} remaining today`;
-        }
         
         container.innerHTML = `
             <div style="background: #f1f5f9; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span>
-                        ${isPro ? '⭐ Pro' : extraCredits > 0 ? '⚡ Extra Credits' : '📊 Free'}
+                        ${isPro ? '⭐ Pro' : '📊 Free'}
                         <strong>${getToolDisplayName(toolType)}</strong>
                     </span>
                     <span>
                         ${isPro ? '♾️ Unlimited' : `${used} / ${limit} used`}
-                        ${extraCredits > 0 ? ' + ⚡' + extraCredits : ''}
-                        ${!isPro && remaining <= 2 && extraCredits === 0 ? ' ⚠️' : ''}
+                        ${!isPro && remaining <= 2 ? ' ⚠️' : ''}
                     </span>
                 </div>
                 ${!isPro ? `
@@ -224,8 +205,8 @@ function displayUsageInfo(containerId, toolType) {
                         <div style="width: ${Math.min(100, percent)}%; height: 100%; background: ${color}; border-radius: 4px; transition: width 0.3s;"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.75rem; color: #64748b;">
-                        <span>${bottomText}</span>
-                        ${!isPro && remaining === 0 && extraCredits === 0 ? '<a href="pricing.html" style="color: #f59e0b; font-weight: 600;">Try 24h for $1.99 →</a>' : ''}
+                        <span>${remaining} remaining today</span>
+                        ${remaining === 0 ? '<a href="pricing.html" style="color: #2563eb; font-weight: 600;">Upgrade to Pro →</a>' : ''}
                     </div>
                 ` : ''}
             </div>
@@ -268,7 +249,50 @@ function renderAuthWidget() {
     }
 }
 
-// ---------- 认证弹窗 ----------
+// ---------- 密码可见切换功能 ----------
+function togglePasswordVisibility(button) {
+    const input = button.parentElement.querySelector('input');
+    if (!input) return;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+        button.setAttribute('aria-label', 'Hide password');
+    } else {
+        input.type = 'password';
+        button.innerHTML = '<i class="fas fa-eye"></i>';
+        button.setAttribute('aria-label', 'Show password');
+    }
+}
+
+// ---------- 创建密码输入框（带可见切换） ----------
+function createPasswordField(placeholder, id, required = true) {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position: relative; width: 100%;';
+    
+    const input = document.createElement('input');
+    input.type = 'password';
+    input.id = id;
+    input.placeholder = placeholder;
+    input.required = required;
+    input.style.cssText = 'width: 100%; padding: 12px; padding-right: 44px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; box-sizing: border-box;';
+    
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.innerHTML = '<i class="fas fa-eye"></i>';
+    btn.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1rem; padding: 4px;';
+    btn.setAttribute('aria-label', 'Show password');
+    btn.onclick = function(e) {
+        e.preventDefault();
+        togglePasswordVisibility(this);
+    };
+    
+    wrapper.appendChild(input);
+    wrapper.appendChild(btn);
+    return wrapper;
+}
+
+// ---------- 认证弹窗（包含密码可见切换） ----------
 function openAuthModal(mode) {
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -292,7 +316,12 @@ function openAuthModal(mode) {
                 </div>
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 4px;">Password</label>
-                    <input type="password" id="authPassword" placeholder="${isLogin ? 'Enter password' : 'Min 6 characters'}" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem;">
+                    <div style="position: relative; width: 100%;">
+                        <input type="password" id="authPassword" placeholder="${isLogin ? 'Enter password' : 'Min 6 characters'}" style="width: 100%; padding: 12px; padding-right: 44px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; box-sizing: border-box;">
+                        <button type="button" onclick="togglePasswordVisibility(this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1rem; padding: 4px;" aria-label="Show password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 ${isLogin ? `
                     <div style="text-align: right; margin-bottom: 16px;">
@@ -385,6 +414,10 @@ function openAuthModal(mode) {
     });
 }
 
+// ---------- 全局暴露 ----------
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.createPasswordField = createPasswordField;
+
 window.ForgeAuth = {
     login,
     register,
@@ -401,6 +434,8 @@ window.ForgeAuth = {
     formatFileSize,
     downloadBase64,
     getToolDisplayName,
+    togglePasswordVisibility,
+    createPasswordField,
     currentUser: () => JSON.parse(localStorage.getItem('forge_user'))
 };
 
