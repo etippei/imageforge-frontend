@@ -91,7 +91,6 @@ def fetch_blog_issues():
             if not issues:
                 break
             
-            # 过滤掉 Pull Requests
             issues = [i for i in issues if 'pull_request' not in i]
             all_issues.extend(issues)
             page += 1
@@ -109,13 +108,11 @@ def parse_issue(issue):
     body = issue.get('body', '') or ''
     title = issue.get('title', 'Untitled')
     
-    # 生成 slug
     slug = re.sub(r'[^a-zA-Z0-9\-]', '-', title.lower())
     slug = re.sub(r'-+', '-', slug).strip('-')
     if not slug:
         slug = f"post-{issue.get('number', 0)}"
     
-    # 日期
     created_at = issue.get('created_at', datetime.now().isoformat())
     try:
         date_obj = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
@@ -125,10 +122,9 @@ def parse_issue(issue):
         date_str = datetime.now().strftime('%Y-%m-%d')
         display_date = datetime.now().strftime('%B %d, %Y')
     
-    # ===== 提取分类（从 YAML Front Matter 或 labels）=====
-    category = 'Tutorial'  # 默认分类
+    # ===== 提取分类 =====
+    category = 'Tutorial'
     
-    # 1. 先从正文开头的 YAML Front Matter 中提取 category
     clean_body_for_parse = body.lstrip()
     if clean_body_for_parse.startswith('---'):
         try:
@@ -143,14 +139,12 @@ def parse_issue(issue):
         except Exception as e:
             print(f"     ⚠️ YAML parsing error: {e}")
     
-    # 2. 如果 Front Matter 中没有，从 Issue Labels 中获取
     if category == 'Uncategorized':
         labels = [l.get('name', '') for l in issue.get('labels', []) if l.get('name') not in ['blog', 'blog-post']]
         if labels:
             category = labels[0]
             print(f"     📌 Found category from labels: {category}")
     
-    # 提取正文内容（去掉 YAML Front Matter）
     clean_body = body
     if clean_body_for_parse.startswith('---'):
         try:
@@ -160,7 +154,6 @@ def parse_issue(issue):
         except:
             pass
     
-    # 摘要（从正文中提取前150个字符）
     plain_text = re.sub(r'[#\*\`\_\[\]\(\)]', '', clean_body)
     excerpt = plain_text[:150].strip()
     if len(plain_text) > 150:
@@ -196,6 +189,10 @@ def generate_post_html(post):
     except Exception as e:
         print(f"  ⚠️ Markdown conversion error: {e}")
         content_html = f"<p>{html.escape(post['content'])}</p>"
+    
+    # 调试输出
+    print(f"  📌 Generating HTML for: {post['title']}")
+    print(f"     Category: {post['category']}")
     
     template = '''<!DOCTYPE html>
 <html lang="en">
@@ -316,7 +313,7 @@ def generate_post_html(post):
         .replace('__TITLE__', html.escape(post['title']))
         .replace('__EXCERPT__', html.escape(post['excerpt']))
         .replace('__SLUG__', post['slug'])
-        .replace('__CATEGORY__', html.escape(post['category']))
+        .replace('__CATEGORY__', html.escape(post['category']))  # ✅ 正确替换分类
         .replace('__DISPLAY_DATE__', post['display_date'])
         .replace('__CONTENT__', content_html)
     )
@@ -327,7 +324,6 @@ def generate_index_html(posts):
     sorted_posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)
     print(f"Generating blog.html with {len(sorted_posts)} posts...")
     
-    # 生成卡片 HTML - 只包含日期，不包含阅读时间和作者
     cards = ''
     for p in sorted_posts[:20]:
         cards += f'''
@@ -350,11 +346,7 @@ def generate_index_html(posts):
             with open(INDEX_FILE, 'r', encoding='utf-8') as f:
                 content = f.read()
             
-            # 替换 blog grid 内容
             import re
-            
-            # 先提取出当前页面中的 filter bar 和 related tools 部分，保留它们
-            # 只替换 #blogGrid 内部的内容
             pattern = r'(<div class="blog-grid-full" id="blogGrid">).*?(</div>\s*</div>\s*<!-- ===== RELATED TOOLS ===== -->)'
             replacement = f'\\1\n{cards}\n            \\2'
             content = re.sub(pattern, replacement, content, flags=re.DOTALL)
@@ -394,7 +386,6 @@ def generate_posts_json(posts):
 def main():
     print("🚀 Building blog from GitHub Issues...")
     
-    # 检查依赖
     try:
         import markdown
         import requests
@@ -404,12 +395,10 @@ def main():
         print(f"❌ Missing dependency: {e}")
         sys.exit(1)
     
-    # 获取 Issues
     issues = fetch_blog_issues()
     
     if not issues:
         print("⚠️ No blog issues found")
-        # 创建占位文章
         issues = [{
             'number': 0,
             'title': 'Welcome to CloakImg AI Blog',
@@ -419,13 +408,11 @@ def main():
             'labels': [{'name': 'blog'}, {'name': 'Tutorial'}]
         }]
     
-    # 解析并生成
     posts = []
     for issue in issues:
         post = parse_issue(issue)
         posts.append(post)
         
-        # 生成文章页面
         try:
             post_html = generate_post_html(post)
             post_file = POSTS_DIR / f"{post['slug']}.html"
@@ -435,7 +422,6 @@ def main():
         except Exception as e:
             print(f"  ❌ Error generating post: {e}")
     
-    # 更新索引
     generate_index_html(posts)
     generate_posts_json(posts)
     
