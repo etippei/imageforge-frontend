@@ -151,16 +151,17 @@
             border-color: #7c3aed;
         }
 
+        /* ===== 一行3篇文章 ===== */
         .blog-grid-full {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 1.8rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
             margin: 1.5rem 0;
         }
         .blog-card-full {
             background: white;
             border-radius: 1.5rem;
-            padding: 1.8rem;
+            padding: 1.5rem;
             border: 1px solid #eef2f6;
             border-left: 4px solid #2563eb;
             box-shadow: 0 4px 12px rgba(0,0,0,0.02);
@@ -191,12 +192,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, #2563eb15, #7c3aed15);
-            border-radius: 14px;
-            margin-bottom: 1rem;
-            font-size: 1.6rem;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            font-size: 1.4rem;
             color: #2563eb;
         }
         .blog-content {
@@ -206,20 +207,20 @@
         }
         .blog-category {
             display: inline-block;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: #2563eb;
             background: #eef2ff;
-            padding: 0.2rem 0.8rem;
+            padding: 0.15rem 0.7rem;
             border-radius: 30px;
             align-self: flex-start;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
         }
         .blog-title {
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: 600;
-            margin-bottom: 0.6rem;
-            line-height: 1.4;
+            margin-bottom: 0.4rem;
+            line-height: 1.3;
         }
         .blog-title a {
             color: #0f172a;
@@ -230,24 +231,28 @@
         }
         .blog-excerpt {
             color: #475569;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            line-height: 1.5;
             flex: 1;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         .blog-meta {
             display: flex;
-            gap: 1.2rem;
-            font-size: 0.8rem;
+            gap: 1rem;
+            font-size: 0.75rem;
             color: #94a3b8;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.6rem;
         }
         .blog-meta i { margin-right: 4px; }
         .blog-read-more {
             color: #2563eb;
             font-weight: 600;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
             align-self: flex-start;
         }
@@ -346,9 +351,16 @@
             border-top: 1px solid #f1f5f9;
         }
 
+        @media (max-width: 992px) {
+            .blog-grid-full {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
         @media (max-width: 768px) {
             .blog-hero h1 { font-size: 1.8rem; }
-            .blog-grid-full { grid-template-columns: 1fr; }
+            .blog-grid-full {
+                grid-template-columns: 1fr;
+            }
             .related-tools-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-content { flex-direction: column; text-align: center; }
             .footer-right { flex-wrap: wrap; justify-content: center; }
@@ -492,18 +504,15 @@
 
                     let cardsHtml = '';
                     posts.forEach(p => {
-                        const readTime = Math.max(1, Math.round((p.excerpt || p.title).length / 200));
-                        const excerpt = p.excerpt || 'Read this article to learn more about AI image processing.';
                         cardsHtml += `
                             <div class="blog-card-full" data-title="${p.title.toLowerCase()}" data-category="${p.category}">
                                 <div class="blog-image-icon"><i class="fas fa-file-alt"></i></div>
                                 <div class="blog-content">
                                     <div class="blog-category">${p.category}</div>
                                     <h3 class="blog-title"><a href="${p.url}">${p.title}</a></h3>
-                                    <p class="blog-excerpt">${excerpt}</p>
+                                    <p class="blog-excerpt">${p.excerpt}</p>
                                     <div class="blog-meta">
                                         <span><i class="far fa-calendar"></i> ${p.display_date}</span>
-                                        <span><i class="far fa-clock"></i> ${readTime} min read</span>
                                     </div>
                                     <a href="${p.url}" class="blog-read-more">Read Full Article →</a>
                                 </div>
@@ -532,31 +541,18 @@
         }
 
         // ============================================================
-        // 更新分类按钮计数
+        // 更新分类按钮（不显示数字）
         // ============================================================
         function updateCategoryCounts() {
+            // 只更新 All 按钮的总数，其他按钮不显示数字
             const cards = document.querySelectorAll('.blog-card-full');
             if (cards.length === 0) return;
             
-            const counts = {};
-            cards.forEach(card => {
-                const category = card.dataset.category || 'Uncategorized';
-                counts[category] = (counts[category] || 0) + 1;
-            });
-            
             const total = cards.length;
-            
             const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
             if (allBtn) {
                 allBtn.textContent = `All (${total})`;
             }
-            
-            Object.keys(counts).forEach(cat => {
-                const btn = document.querySelector(`.filter-btn[data-filter="${cat}"]`);
-                if (btn) {
-                    btn.textContent = `${cat} (${counts[cat]})`;
-                }
-            });
         }
 
         // ============================================================
