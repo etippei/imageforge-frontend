@@ -126,17 +126,15 @@ def parse_issue(issue):
         display_date = datetime.now().strftime('%B %d, %Y')
     
     # ===== 提取分类（从 YAML Front Matter 或 labels）=====
-    category = 'Uncategorized'
+    category = 'Tutorial'  # 默认分类改为 Tutorial
     
     # 1. 先从正文开头的 YAML Front Matter 中提取 category
     clean_body_for_parse = body.lstrip()
     if clean_body_for_parse.startswith('---'):
         try:
-            # 找到第二个 --- 的位置
             end_of_frontmatter = clean_body_for_parse.find('---', 3)
             if end_of_frontmatter > 0:
                 front_matter_text = clean_body_for_parse[3:end_of_frontmatter].strip()
-                # 用 yaml 解析
                 front_matter_data = yaml.safe_load(front_matter_text)
                 if front_matter_data and isinstance(front_matter_data, dict):
                     if 'category' in front_matter_data:
@@ -146,11 +144,16 @@ def parse_issue(issue):
             print(f"     ⚠️ YAML parsing error: {e}")
     
     # 2. 如果 Front Matter 中没有，从 Issue Labels 中获取
-    if category == 'Uncategorized':
+    if category == 'Uncategorized' or category == 'Tutorial':
         labels = [l.get('name', '') for l in issue.get('labels', []) if l.get('name') not in ['blog', 'blog-post']]
         if labels:
-            category = labels[0]
-            print(f"     📌 Found category from labels: {category}")
+            # 尝试匹配已知分类
+            known_categories = ['Tutorial', 'Tips', 'Guide', 'Performance', 'Trends']
+            for label in labels:
+                if label in known_categories:
+                    category = label
+                    print(f"     📌 Found category from labels: {category}")
+                    break
     
     # 提取正文内容（去掉 YAML Front Matter）
     clean_body = body
@@ -164,8 +167,8 @@ def parse_issue(issue):
     
     # 摘要（从正文中提取前200个字符）
     plain_text = re.sub(r'[#\*\`\_\[\]\(\)]', '', clean_body)
-    excerpt = plain_text[:250].strip()
-    if len(plain_text) > 250:
+    excerpt = plain_text[:200].strip()
+    if len(plain_text) > 200:
         excerpt += '...'
     if not excerpt:
         excerpt = 'Read this article to learn more.'
@@ -198,9 +201,6 @@ def generate_post_html(post):
     except Exception as e:
         print(f"  ⚠️ Markdown conversion error: {e}")
         content_html = f"<p>{html.escape(post['content'])}</p>"
-    
-    word_count = len(post['content'].split())
-    read_time = max(1, round(word_count / 200))
     
     template = '''<!DOCTYPE html>
 <html lang="en">
@@ -323,8 +323,6 @@ def generate_post_html(post):
         .replace('__SLUG__', post['slug'])
         .replace('__CATEGORY__', html.escape(post['category']))
         .replace('__DISPLAY_DATE__', post['display_date'])
-        .replace('__READ_TIME__', f"{read_time} min read")
-        .replace('__AUTHOR__', html.escape(post['author']))
         .replace('__CONTENT__', content_html)
     )
 
@@ -334,10 +332,9 @@ def generate_index_html(posts):
     sorted_posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)
     print(f"Generating blog.html with {len(sorted_posts)} posts...")
     
-    # 生成卡片 HTML
+    # 生成卡片 HTML（不包含阅读时间）
     cards = ''
     for p in sorted_posts[:20]:
-        read_time = max(1, round(len(p['content'].split()) / 200))
         cards += f'''
                 <div class="blog-card-full">
                     <div class="blog-image-icon"><i class="fas fa-file-alt"></i></div>
@@ -347,7 +344,6 @@ def generate_index_html(posts):
                         <p class="blog-excerpt">{html.escape(p['excerpt'])}</p>
                         <div class="blog-meta">
                             <span><i class="far fa-calendar"></i> {p['display_date']}</span>
-                            <span><i class="far fa-clock"></i> {read_time} min read</span>
                         </div>
                         <a href="blog/posts/{p['slug']}.html" class="blog-read-more">Read Full Article →</a>
                     </div>
