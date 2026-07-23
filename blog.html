@@ -541,18 +541,12 @@
         }
 
         // ============================================================
-        // 更新分类按钮（不显示数字）
+        // 更新分类按钮 - 不显示数量
         // ============================================================
         function updateCategoryCounts() {
-            // 只更新 All 按钮的总数，其他按钮不显示数字
-            const cards = document.querySelectorAll('.blog-card-full');
-            if (cards.length === 0) return;
-            
-            const total = cards.length;
-            const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-            if (allBtn) {
-                allBtn.textContent = `All (${total})`;
-            }
+            // 不更新任何按钮的文字，保持原样
+            // 这样 All 按钮不会显示 (1)
+            console.log('Category counts updated (numbers hidden)');
         }
 
         // ============================================================
