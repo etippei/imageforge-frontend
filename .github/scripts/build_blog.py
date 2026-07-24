@@ -122,16 +122,16 @@ def parse_issue(issue):
         date_str = datetime.now().strftime('%Y-%m-%d')
         display_date = datetime.now().strftime('%B %d, %Y')
     
-    # ===== 修复：第一步先从Issue标签读取分类（兜底逻辑）=====
-    category = 'Uncategorized'
-    # 过滤掉blog/blog-post内置标签，取第一个自定义标签作为分类
-    labels = [l.get('name', '').strip() for l in issue.get('labels', []) 
-              if l.get('name') and l.get('name') not in ['blog', 'blog-post']]
+    # ===== 提取分类（参考另一个网站的逻辑）=====
+    category = 'Tutorial'  # 默认分类
+    
+    # 1. 从 Issue 标签中提取（过滤掉 blog）
+    labels = [l.get('name', '') for l in issue.get('labels', []) if l.get('name') not in ['blog', 'blog-post']]
     if labels:
         category = labels[0]
-        print(f"     📌 Category loaded from Issue label: {category}")
+        print(f"     📌 Category from label: {category}")
     
-    # ===== 修复：第二步读取FrontMatter，优先级高于标签 =====
+    # 2. 从 FrontMatter 中读取 category（覆盖标签）
     clean_body_for_parse = body.lstrip()
     if clean_body_for_parse.startswith('---'):
         try:
@@ -141,12 +141,12 @@ def parse_issue(issue):
                 front_matter_data = yaml.safe_load(front_matter_text)
                 if front_matter_data and isinstance(front_matter_data, dict):
                     if 'category' in front_matter_data and front_matter_data['category']:
-                        # FrontMatter分类覆盖标签分类
                         category = str(front_matter_data['category']).strip('"\'')
-                        print(f"     📌 Category overwritten by Front Matter: {category}")
+                        print(f"     📌 Category from FrontMatter: {category}")
         except Exception as e:
-            print(f"     ⚠️ YAML parsing error, keep label category [{category}]: {e}")
+            print(f"     ⚠️ YAML parsing error: {e}")
     
+    # 提取正文内容（去掉 YAML Front Matter）
     clean_body = body
     if clean_body_for_parse.startswith('---'):
         try:
@@ -192,9 +192,7 @@ def generate_post_html(post):
         print(f"  ⚠️ Markdown conversion error: {e}")
         content_html = f"<p>{html.escape(post['content'])}</p>"
     
-    # 调试输出
-    print(f"  📌 Generating HTML for: {post['title']}")
-    print(f"     Category: {post['category']}")
+    print(f"  📌 Generating HTML: {post['title']} -> Category: {post['category']}")
     
     template = '''<!DOCTYPE html>
 <html lang="en">
@@ -315,7 +313,7 @@ def generate_post_html(post):
         .replace('__TITLE__', html.escape(post['title']))
         .replace('__EXCERPT__', html.escape(post['excerpt']))
         .replace('__SLUG__', post['slug'])
-        .replace('__CATEGORY__', html.escape(post['category']))  # ✅ 正确替换分类
+        .replace('__CATEGORY__', html.escape(post['category']))
         .replace('__DISPLAY_DATE__', post['display_date'])
         .replace('__CONTENT__', content_html)
     )
