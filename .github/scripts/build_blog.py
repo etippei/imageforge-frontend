@@ -370,7 +370,7 @@ def generate_posts_json(posts):
         posts_data.append({
             'slug': p['slug'],
             'title': p['title'],
-            'category': p['category'],
+            'category': p['category'],  # ✅ 直接使用 p['category']
             'date': p['date'],
             'display_date': p['display_date'],
             'excerpt': p['excerpt'],
