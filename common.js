@@ -2,7 +2,7 @@
 // 前端公共JS - 包含认证、API调用、使用统计
 // ============================================
 
-const API_BASE = 'https://imageforge-api.etiplpl.workers.dev/api';
+const API_BASE = 'https://cloakimg-api.etiplpl.workers.dev/api';
 
 // ---------- 用户认证 ----------
 async function apiRequest(endpoint, options = {}) {
